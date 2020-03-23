@@ -2,7 +2,7 @@ import XCTest
 
 @testable import App
 
-class ExtensionsTest : XCTestCase {
+class StringExtensionsTest : XCTestCase {
     
     func testStringTrim_withSpace() throws {
         let untrimmed = " \n \t text \n \t "
@@ -32,27 +32,13 @@ class ExtensionsTest : XCTestCase {
         XCTAssertTrue(text.isNotBlank())
     }
     
-    func testNullOrBlank_isNull() throws {
-        let text: String? = nil
-        
-        XCTAssertTrue(text.isNullOrBlank())
-    }
-    
-    func testNullOrBlank_nonBlank() throws {
-        let text: String? = " \n \t .   "
-        
-        XCTAssertTrue(text.isNotNullNorBlank())
-    }
-    
     // Test config
     
     static let allTests = [
         ("testStringTrim_withSpace", testStringTrim_withSpace),
         ("testStringTrim_noSpace", testStringTrim_noSpace),
         ("testStringIsBlank_blank", testStringIsBlank_blank),
-        ("testStringIsNotBlank_nonBlank", testStringIsNotBlank_nonBlank),
-        ("testNullOrBlank_isNull", testNullOrBlank_isNull),
-        ("testNullOrBlank_nonBlank", testNullOrBlank_nonBlank)
+        ("testStringIsNotBlank_nonBlank", testStringIsNotBlank_nonBlank)
     ]
     
 }
