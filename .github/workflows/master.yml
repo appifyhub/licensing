@@ -1,0 +1,29 @@
+name: Assemble BETA
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+
+  build_and_test:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Print build name
+        run: echo "Building repo '$GITHUB_REPOSITORY', SHA $GITHUB_SHA, by $GITHUB_ACTOR"
+
+      - name: Authorize Docker repository
+        env:
+          USER: ${{ secrets.GITHUB_PACKAGES_USER }}
+          TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
+        run: docker login docker.pkg.github.com -u $USER -p $TOKEN
+
+      - name: Build the BETA Docker image
+        run: docker build . --file Dockerfile --tag docker.pkg.github.com/$GITHUB_REPOSITORY/beta:$GITHUB_SHA
+
+      - name: Publish the built image as 'beta'
+        run: docker push docker.pkg.github.com/$GITHUB_REPOSITORY/beta:$GITHUB_SHA

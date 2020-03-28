@@ -1,0 +1,47 @@
+name: Assemble RELEASE
+
+on:
+  push:
+    branches:
+      - release
+    tags:
+      - v*
+
+jobs:
+
+  push:
+
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Print build name
+        run: echo "Building repo '$GITHUB_REPOSITORY', SHA $GITHUB_SHA, by $GITHUB_ACTOR"
+
+      - name: Authorize Docker repository
+        env:
+            USER: ${{ secrets.GITHUB_PACKAGES_USER }}
+            TOKEN: ${{ secrets.GITHUB_PACKAGES_TOKEN }}
+        run: docker login docker.pkg.github.com -u $USER -p $TOKEN
+
+      - name: Build the RELEASE Docker image
+        run: |
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          # Build the release image
+          docker build . --file Dockerfile --tag release
+
+          # Tag the release image with its version and 'latest'
+          echo Tagging with $VERSION...
+          docker tag release docker.pkg.github.com/$GITHUB_REPOSITORY/release:$VERSION
+          docker tag release docker.pkg.github.com/$GITHUB_REPOSITORY/release:latest
+
+          # Finally, publish both tags
+          docker push docker.pkg.github.com/$GITHUB_REPOSITORY/release:$VERSION
+          docker push docker.pkg.github.com/$GITHUB_REPOSITORY/release:latest
