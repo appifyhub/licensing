@@ -6,7 +6,7 @@ on:
 
 jobs:
 
-  build_and_test:
+  assemble_beta:
 
     runs-on: ubuntu-latest
 
@@ -23,7 +23,7 @@ jobs:
         run: docker login docker.pkg.github.com -u $USER -p $TOKEN
 
       - name: Build the BETA Docker image
-        run: docker build . --file Dockerfile --tag docker.pkg.github.com/$GITHUB_REPOSITORY/beta:$GITHUB_SHA
+        run: docker build . --file Dockerfile --tag docker.pkg.github.com/$GITHUB_REPOSITORY/beta:latest
 
       - name: Publish the built image as 'beta'
-        run: docker push docker.pkg.github.com/$GITHUB_REPOSITORY/beta:$GITHUB_SHA
+        run: docker push docker.pkg.github.com/$GITHUB_REPOSITORY/beta:latest
