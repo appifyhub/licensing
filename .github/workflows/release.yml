@@ -2,8 +2,7 @@ name: Assemble RELEASE
 
 on:
   push:
-    branches:
-      - release
+    branches: [ release ]
     tags:
       - v*
 
@@ -15,6 +14,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: release
 
       - name: Print build name
         run: echo "Building repo '$GITHUB_REPOSITORY', SHA $GITHUB_SHA, by $GITHUB_ACTOR"
