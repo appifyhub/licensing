@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/vapor/core.git",
         "state": {
           "branch": null,
-          "revision": "10d33362a47fab03a067e78fb0791341d9c634fa",
-          "version": "3.9.3"
+          "revision": "1782c550512dc5a43d0bca405e28fc386d932bbf",
+          "version": "3.10.0"
         }
       },
       {
@@ -51,8 +51,17 @@
         "repositoryURL": "https://github.com/vapor/multipart.git",
         "state": {
           "branch": null,
-          "revision": "f063180d0b84832accd33194e06ed3c41f8609ac",
-          "version": "3.1.1"
+          "revision": "a7e0db512ff7eee7cd91d0a69dfeeec36f74d604",
+          "version": "3.1.2"
+        }
+      },
+      {
+        "package": "MySQL",
+        "repositoryURL": "https://github.com/vapor/mysql-kit.git",
+        "state": {
+          "branch": null,
+          "revision": "97e9811b0b5d43d625bf5064032fe7b3b17a15f2",
+          "version": "3.3.1"
         }
       },
       {
@@ -71,6 +80,15 @@
           "branch": null,
           "revision": "fa5b5de62bd68bcde9a69933f31319e46c7275fb",
           "version": "1.0.2"
+        }
+      },
+      {
+        "package": "SQL",
+        "repositoryURL": "https://github.com/vapor/sql.git",
+        "state": {
+          "branch": null,
+          "revision": "50eaeb8f52a1ce63f1ff3880e1114dd8757a78a6",
+          "version": "2.3.2"
         }
       },
       {
@@ -114,8 +132,8 @@
         "repositoryURL": "https://github.com/vapor/template-kit.git",
         "state": {
           "branch": null,
-          "revision": "51405c83e95e8adb09565278a5e9b959c605e56c",
-          "version": "1.4.0"
+          "revision": "4370aa99c01fc19cc8272b67bf7204b2d2063680",
+          "version": "1.5.0"
         }
       },
       {
@@ -123,8 +141,8 @@
         "repositoryURL": "https://github.com/vapor/url-encoded-form.git",
         "state": {
           "branch": null,
-          "revision": "44999b47d88ca2e0c0b893599b3240e342ba39ff",
-          "version": "1.0.7"
+          "revision": "20f68fbe7fac006d4d0617ea4edcba033227359e",
+          "version": "1.1.0"
         }
       },
       {
