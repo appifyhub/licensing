@@ -1,26 +1,43 @@
 import Foundation
 
-struct Service : Hashable {
+final class Service : Codable {
     
-    let ID: Int
+    let ID: Int?
     let name: String
     let createdAt: Int64
     let updatedAt: Int64
     
+    init(
+        ID: Int? = nil,
+        name: String,
+        createdAt: Int64,
+        updatedAt: Int64
+    ) {
+        self.ID = ID
+        self.name = name
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+    
+}
+
+// safe modifiers
+extension Service {
+    
     func withChangedName(_ newName: String) -> Service {
         return Service(
-            ID: ID,
+            ID: self.ID,
             name: newName,
-            createdAt: createdAt,
-            updatedAt: updatedAt
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
         )
     }
     
     func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Service {
         return Service(
-            ID: ID,
-            name: name,
-            createdAt: createdAt,
+            ID: self.ID,
+            name: self.name,
+            createdAt: self.createdAt,
             updatedAt: timeProvider.epochMillis()
         )
     }
@@ -29,20 +46,25 @@ struct Service : Hashable {
 
 extension Service : Comparable {
     
+    static func == (lhs: Service, rhs: Service) -> Bool {
+        return lhs.ID == rhs.ID &&
+            lhs.name == rhs.name
+    }
+    
     static func < (lhs: Service, rhs: Service) -> Bool {
-        return lhs.ID < rhs.ID
+        return lhs.name < rhs.name
     }
     
     static func <= (lhs: Service, rhs: Service) -> Bool {
-        return lhs.ID <= rhs.ID
+        return lhs.name <= rhs.name
     }
     
     static func >= (lhs: Service, rhs: Service) -> Bool {
-        return lhs.ID >= rhs.ID
+        return lhs.name >= rhs.name
     }
     
     static func > (lhs: Service, rhs: Service) -> Bool {
-        return lhs.ID > rhs.ID
+        return lhs.name > rhs.name
     }
     
 }
