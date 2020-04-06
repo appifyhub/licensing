@@ -1,6 +1,6 @@
 import Foundation
 
-extension String {
+extension String : Error {
     
     func trim() -> String {
         return self.trimmingCharacters(in: .whitespacesAndNewlines)
