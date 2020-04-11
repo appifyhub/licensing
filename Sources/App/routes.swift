@@ -9,7 +9,7 @@ public func routes(_ router: Router) throws {
     }
     
     // TODO remove once real DAOs are ready
-    struct MySQLVersion : Codable, Content {
+    struct MySQLVersion : Content {
         let version: String
     }
     router.get("sql") { req in

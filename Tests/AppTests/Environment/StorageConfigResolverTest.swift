@@ -4,7 +4,7 @@ import XCTest
 
 class StorageConfigResolverTest : XCTestCase {
     
-    private let KEY_TYPE = "STORAGE_TYPE"
+    private let KEY_TYPE = "DB_TYPE"
     private let KEY_HOST = "DB_HOST"
     private let KEY_PORT = "DB_PORT"
     private let KEY_USER = "DB_USER"
