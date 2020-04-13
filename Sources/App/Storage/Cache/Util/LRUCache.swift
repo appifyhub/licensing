@@ -20,8 +20,8 @@ class LRUCache<Model : HasCacheKey> : ICache<Model> {
         defer { semaphore.signal() }
         
         // remove and add to update the usage index
-        if cache[model.key] != nil {
-            remove(model.key)
+        if cache[model.cacheKey] != nil {
+            remove(model.cacheKey)
         } else if priority.count >= maxSize, let keyToRemove = priority.last?.value {
             remove(keyToRemove)
         }
@@ -76,10 +76,10 @@ class LRUCache<Model : HasCacheKey> : ICache<Model> {
     }
     
     private func insert(_ model: Model) {
-        cache[model.key] = model
-        let newNode = LinkedList<AnyHashable>.Node(value: model.key)
+        cache[model.cacheKey] = model
+        let newNode = LinkedList<AnyHashable>.Node(value: model.cacheKey)
         priority.insert(newNode, at: 0)
-        key2node[model.key] = newNode
+        key2node[model.cacheKey] = newNode
     }
     
     private func fetch(_ key: AnyHashable) -> Model? {
@@ -96,7 +96,7 @@ class LRUCache<Model : HasCacheKey> : ICache<Model> {
     
     private func lookup(_ filter: (Model) -> Bool) -> [Model] {
         return cache.values.filter(filter).map { model -> Model in
-            fetch(model.key)! // do this to update priorities
+            fetch(model.cacheKey)! // do this to update priorities
         }
     }
     
