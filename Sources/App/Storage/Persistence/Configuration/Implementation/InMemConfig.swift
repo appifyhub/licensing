@@ -1,6 +1,6 @@
 import Foundation
 
-struct InMemStorageConfig : StorageConfig {
+struct InMemConfig : PersistenceConfig {
     
     let type: StorageType = .inmem
     

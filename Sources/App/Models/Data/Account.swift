@@ -58,7 +58,7 @@ final class Account : Codable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
-    
+
 }
 
 // safe modifiers
@@ -71,7 +71,7 @@ extension Account {
         } else {
             ID = newID
         }
-        
+
         return Account(
             ID: ID,
             name: self.name,
@@ -84,7 +84,7 @@ extension Account {
             updatedAt: self.updatedAt
         )
     }
-    
+
     func withChangedName(_ newName: String) -> Account {
         return Account(
             ID: self.ID,
@@ -168,7 +168,7 @@ extension Account {
             updatedAt: self.updatedAt
         )
     }
-    
+
     func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Account {
         return Account(
             ID: self.ID,
@@ -182,7 +182,7 @@ extension Account {
             updatedAt: self.updatedAt
         )
     }
-    
+
     func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Account {
         return Account(
             ID: self.ID,

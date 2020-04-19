@@ -1,6 +1,6 @@
 import Foundation
 
-struct DevMySQLConfig : MySQLConfig {
+struct DebugMySQLConfig : MySQLConfig {
     
     let type: StorageType = .mysql
     

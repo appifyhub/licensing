@@ -6,12 +6,12 @@ enum StorageType : String, CaseIterable {
 }
 
 /// Basic config, holds the type
-protocol StorageConfig {
+protocol PersistenceConfig {
     var type: StorageType { get }
 }
 
 // SQL-specific config
-protocol SQLConfig : StorageConfig {
+protocol SQLConfig : PersistenceConfig {
     
     var hostname: String { get }
     var port: Int { get }

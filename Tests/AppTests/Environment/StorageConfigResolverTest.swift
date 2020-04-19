@@ -14,7 +14,7 @@ class StorageConfigResolverTest : XCTestCase {
     func test_noEnvironmentConfig_nothingChosen() throws {
         let config = StorageConfigResolver.resolve()
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is MySQLConfig)
     }
     
     func test_noEnvironmentConfig_inMemChosen() throws {
@@ -23,7 +23,7 @@ class StorageConfigResolverTest : XCTestCase {
         let config = StorageConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is InMemConfig)
     }
     
     func test_noEnvironmentConfig_MySQLChosen() throws {
@@ -32,7 +32,7 @@ class StorageConfigResolverTest : XCTestCase {
         let config = StorageConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         
-        XCTAssertTrue(config is DevMySQLConfig)
+        XCTAssertTrue(config is DebugMySQLConfig)
     }
     
     func test_withEnvironmentConfig_nothingChosen() throws {
@@ -49,7 +49,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is MySQLConfig)
     }
     
     func test_withEnvironmentConfig_inMemChosen() throws {
@@ -68,7 +68,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is InMemConfig)
     }
     
     func test_withEnvironmentConfig_MySQLChosen_wrongData() throws {
@@ -87,7 +87,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is DevMySQLConfig)
+        XCTAssertTrue(config is DebugMySQLConfig)
     }
     
     func test_withEnvironmentConfig_MySQLChosen_noPort() throws {

@@ -1,5 +1,9 @@
 import Foundation
 
+protocol HasCacheKey {
+    var cacheKey: AnyHashable { get }
+}
+
 /// This can't be a protocol because associatedTypes are nonsense.
 class ICache<Model : HasCacheKey> {
     
@@ -18,8 +22,4 @@ class ICache<Model : HasCacheKey> {
     @discardableResult
     func findAll(_ filter: (Model) -> Bool) -> [Model] { return [] }
     
-}
-
-protocol HasCacheKey {
-    var cacheKey: AnyHashable { get }
 }

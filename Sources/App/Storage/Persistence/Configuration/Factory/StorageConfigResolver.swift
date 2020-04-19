@@ -3,7 +3,7 @@ import Vapor
 
 final class StorageConfigResolver {
     
-    private static let DEFAULT_TYPE = StorageType.inmem
+    private static let DEFAULT_TYPE: StorageType = .mysql
     
     private static let KEY_DB_TYPE = "DB_TYPE"
     private static let KEY_DB_HOST = "DB_HOST"
@@ -14,14 +14,14 @@ final class StorageConfigResolver {
     
     private init() {}
     
-    static func resolve() -> StorageConfig {
-        let config: StorageConfig
+    static func resolve() -> PersistenceConfig {
+        let config: PersistenceConfig
         let envType = Environment.get(KEY_DB_TYPE)?.trim() ?? ""
         let resolvedType = StorageType.resolve(envType, defaultType: DEFAULT_TYPE)
         
         switch resolvedType {
             case .inmem:
-                config = InMemStorageConfig()
+                config = InMemConfig()
             case .mysql:
                 let envConfig = EnvironmentMySQLConfig(
                     rawHost: Environment.get(KEY_DB_HOST),
@@ -33,7 +33,7 @@ final class StorageConfigResolver {
                 if (envConfig.isValid()) {
                     config = envConfig
                 } else {
-                    config = DevMySQLConfig()
+                    config = DebugMySQLConfig()
                 }   
         }
         
