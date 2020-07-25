@@ -19,16 +19,48 @@ final class Service : Codable {
         self.updatedAt = updatedAt
     }
     
+    private enum CodingKeys : String, CodingKey {
+        case ID = "id"
+        case name = "name"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+    
 }
 
 // safe modifiers
 extension Service {
+    
+    func tryWithChangedID(_ newID: Int) -> Service {
+        let ID: Int
+        if let oldID = self.ID {
+            ID = oldID
+        } else {
+            ID = newID
+        }
+        
+        return Service(
+            ID: ID,
+            name: self.name,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
     
     func withChangedName(_ newName: String) -> Service {
         return Service(
             ID: self.ID,
             name: newName,
             createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
+    
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Service {
+        return Service(
+            ID: self.ID,
+            name: self.name,
+            createdAt: timeProvider.epochMillis(),
             updatedAt: self.updatedAt
         )
     }
