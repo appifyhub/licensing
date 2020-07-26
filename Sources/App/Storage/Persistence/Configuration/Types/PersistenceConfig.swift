@@ -1,13 +1,13 @@
 import Foundation
 
-enum StorageType : String, CaseIterable {
+enum PersistenceType : String, CaseIterable {
     case mysql = "mysql"
     case inmem = "inmem"
 }
 
 /// Basic config, holds the type
 protocol PersistenceConfig {
-    var type: StorageType { get }
+    var type: PersistenceType { get }
 }
 
 // SQL-specific config

@@ -2,7 +2,7 @@ import Foundation
 
 struct DebugMySQLConfig : MySQLConfig {
     
-    let type: StorageType = .mysql
+    let type: PersistenceType = .mysql
     
     let hostname: String = "localhost"
     let port: Int = 3306

@@ -5,7 +5,7 @@ private let MIN_PORT = 1025
 
 struct EnvironmentMySQLConfig : MySQLConfig {
     
-    let type: StorageType = .mysql
+    let type: PersistenceType = .mysql
     
     let hostname: String
     let port: Int

@@ -1,9 +1,9 @@
 import Foundation
 import Vapor
 
-final class StorageConfigResolver {
+final class PersistenceConfigResolver {
     
-    private static let DEFAULT_TYPE: StorageType = .mysql
+    private static let DEFAULT_TYPE: PersistenceType = .mysql
     
     private static let KEY_DB_TYPE = "DB_TYPE"
     private static let KEY_DB_HOST = "DB_HOST"
@@ -15,13 +15,12 @@ final class StorageConfigResolver {
     private init() {}
     
     static func resolve() -> PersistenceConfig {
-        let config: PersistenceConfig
         let envType = Environment.get(KEY_DB_TYPE)?.trim() ?? ""
-        let resolvedType = StorageType.resolve(envType, defaultType: DEFAULT_TYPE)
+        let resolvedType = PersistenceType.allCases.first { "\($0)" == envType } ?? DEFAULT_TYPE
         
         switch resolvedType {
             case .inmem:
-                config = InMemConfig()
+                return InMemConfig()
             case .mysql:
                 let envConfig = EnvironmentMySQLConfig(
                     rawHost: Environment.get(KEY_DB_HOST),
@@ -30,22 +29,9 @@ final class StorageConfigResolver {
                     rawPassword: Environment.get(KEY_DB_PASS),
                     rawDatabaseName: Environment.get(KEY_DB_NAME)
                 )
-                if (envConfig.isValid()) {
-                    config = envConfig
-                } else {
-                    config = DebugMySQLConfig()
-                }   
+                if (envConfig.isValid()) { return envConfig }
         }
-        
-        return config
-    }
-    
-}
-
-private extension StorageType {
-    
-    static func resolve(_ name: String, defaultType: StorageType) -> StorageType {
-        return self.allCases.first { "\($0)" == name } ?? defaultType
+        return DebugMySQLConfig()
     }
     
 }
