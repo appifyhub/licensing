@@ -24,8 +24,10 @@ final class DI {
     private let lock = DispatchSemaphore(value: 1)
     
     private lazy var accountCache: IAccountCache = { return AccountInMemCache(maxSize: cacheConfig.maxStoredItems) }()
+    private lazy var accessCache: IAccessCache = { return AccessInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     
     private lazy var accountMemPersistence: IAccountPersistence = { return AccountPersistenceInMem(timeProvider: timeProvider) }()
+    private lazy var accessMemPersistence: IAccessPersistence = { return AccessPersistenceInMem(timeProvider: timeProvider) }()
     
     // Initializer
     
@@ -47,6 +49,12 @@ final class DI {
         return accountCache
     }
     
+    func getAccessCache() -> IAccessCache {
+        lock.wait()
+        defer { lock.signal() }
+        return accessCache
+    }
+    
     // Persistence
     
     func getAccountPersistence(for request: Request) -> IAccountPersistence {
@@ -57,6 +65,22 @@ final class DI {
             case .mysql: return AccountPersistenceMySQL(timeProvider: timeProvider, request: request)
             case .inmem: return accountMemPersistence
         }
+    }
+    
+    func getAccessPersistence(for request: Request) -> IAccessPersistence {
+        lock.wait()
+        defer { lock.signal() }
+        switch persistenceConfig.type {
+            // SQL works with a request, so a new instance is required every time
+            case .mysql: return AccessPersistenceMySQL(timeProvider: timeProvider, request: request)
+            case .inmem: return accessMemPersistence
+        }
+    }
+    
+    // Utility
+    
+    func getTimeProvider() -> TimeProvider {
+        return timeProvider
     }
     
 }
