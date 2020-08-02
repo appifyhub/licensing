@@ -1,17 +1,18 @@
 import Foundation
+import MySQL
 
 final class Account : Codable {
     
-    enum AccountType : Int, Codable {
-        case personal
-        case organization
+    enum AccountType : UInt8, Codable, CaseIterable, ReflectionDecodable {
+        case personal = 1
+        case organization = 2
     }
     
-    enum AccountAuthority : Int, Codable {
-        case normal
-        case elevated
-        case admin
-        case owner
+    enum AccountAuthority : UInt8, Codable, CaseIterable, ReflectionDecodable {
+        case normal = 1
+        case elevated = 2
+        case admin = 3
+        case owner = 4
     }
     
     let ID: Int?
@@ -32,8 +33,8 @@ final class Account : Codable {
         phashed: String,
         type: AccountType,
         authority: AccountAuthority,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.name = name
@@ -46,11 +47,44 @@ final class Account : Codable {
         self.updatedAt = updatedAt
     }
     
+    private enum CodingKeys : String, CodingKey {
+        case ID = "id"
+        case name = "name"
+        case ownerName = "owner_name"
+        case email = "email"
+        case phashed = "phashed"
+        case type = "type"
+        case authority = "authority"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+
 }
 
 // safe modifiers
 extension Account {
     
+    func tryWithChangedID(_ newID: Int) -> Account {
+        let ID: Int
+        if let oldID = self.ID {
+            ID = oldID
+        } else {
+            ID = newID
+        }
+
+        return Account(
+            ID: ID,
+            name: self.name,
+            ownerName: self.ownerName,
+            email: self.email,
+            phashed: self.phashed,
+            type: self.type,
+            authority: self.authority,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
+
     func withChangedName(_ newName: String) -> Account {
         return Account(
             ID: self.ID,
@@ -134,7 +168,21 @@ extension Account {
             updatedAt: self.updatedAt
         )
     }
-    
+
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Account {
+        return Account(
+            ID: self.ID,
+            name: self.name,
+            ownerName: self.ownerName,
+            email: self.email,
+            phashed: self.phashed,
+            type: self.type,
+            authority: self.authority,
+            createdAt: timeProvider.epochMillis(),
+            updatedAt: self.updatedAt
+        )
+    }
+
     func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Account {
         return Account(
             ID: self.ID,

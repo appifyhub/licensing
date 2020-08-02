@@ -12,6 +12,12 @@ final class Access : Codable {
         self.createdAt = createdAt
     }
     
+    private enum CodingKeys : String, CodingKey {
+        case token = "token"
+        case accountID = "account_id"
+        case createdAt = "created_at"
+    }
+    
 }
 
 // safe modifiers

@@ -1,18 +1,19 @@
 import Foundation
+import MySQL
 
 final class Project : Codable {
     
-    enum ProjectType : Int, Codable {
-        case opensource
-        case commercial
-        case free
+    enum ProjectType : UInt8, Codable, CaseIterable, ReflectionDecodable {
+        case opensource = 1
+        case commercial = 2
+        case free = 3
     }
     
-    enum ProjectStatus : Int, Codable {
-        case review
-        case active
-        case blocked
-        case suspended
+    enum ProjectStatus : UInt8, Codable, CaseIterable, ReflectionDecodable {
+        case review = 1
+        case active = 2
+        case blocked = 3
+        case suspended = 4
     }
     
     let ID: Int?
@@ -41,10 +42,39 @@ final class Project : Codable {
         self.updatedAt = updatedAt
     }
     
+    private enum CodingKeys : String, CodingKey {
+        case ID = "id"
+        case accountID = "account_id"
+        case name = "name"
+        case type = "type"
+        case status = "status"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+    
 }
 
 // safe modifiers
 extension Project {
+    
+    func tryWithChangedID(_ newID: Int) -> Project {
+        let ID: Int
+        if let oldID = self.ID {
+            ID = oldID
+        } else {
+            ID = newID
+        }
+        
+        return Project(
+            ID: ID,
+            accountID: self.accountID,
+            name: self.name,
+            type: self.type,
+            status: self.status,
+            createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
     
     func withChangedName(_ newName: String) -> Project {
         return Project(
@@ -78,6 +108,18 @@ extension Project {
             type: self.type,
             status: newStatus,
             createdAt: self.createdAt,
+            updatedAt: self.updatedAt
+        )
+    }
+    
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Project {
+        return Project(
+            ID: self.ID,
+            accountID: self.accountID,
+            name: self.name,
+            type: self.type,
+            status: self.status,
+            createdAt: timeProvider.epochMillis(),
             updatedAt: self.updatedAt
         )
     }

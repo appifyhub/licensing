@@ -1,8 +1,8 @@
 import Foundation
 
-struct InMemStorageConfig : StorageConfig {
+struct InMemConfig : PersistenceConfig {
     
-    let type: StorageType = .inmem
+    let type: PersistenceType = .inmem
     
     func isValid() -> Bool {
         return true

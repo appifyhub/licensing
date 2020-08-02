@@ -2,9 +2,9 @@ import XCTest
 
 @testable import App
 
-class StorageConfigResolverTest : XCTestCase {
+class PersistenceConfigResolverTest : XCTestCase {
     
-    private let KEY_TYPE = "STORAGE_TYPE"
+    private let KEY_TYPE = "DB_TYPE"
     private let KEY_HOST = "DB_HOST"
     private let KEY_PORT = "DB_PORT"
     private let KEY_USER = "DB_USER"
@@ -12,27 +12,27 @@ class StorageConfigResolverTest : XCTestCase {
     private let KEY_NAME = "DB_NAME"
     
     func test_noEnvironmentConfig_nothingChosen() throws {
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is MySQLConfig)
     }
     
     func test_noEnvironmentConfig_inMemChosen() throws {
-        setenv(KEY_TYPE, StorageType.inmem.rawValue, 1)
+        setenv(KEY_TYPE, PersistenceType.inmem.rawValue, 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is InMemConfig)
     }
     
     func test_noEnvironmentConfig_MySQLChosen() throws {
-        setenv(KEY_TYPE, StorageType.mysql.rawValue, 1)
+        setenv(KEY_TYPE, PersistenceType.mysql.rawValue, 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         
-        XCTAssertTrue(config is DevMySQLConfig)
+        XCTAssertTrue(config is DebugMySQLConfig)
     }
     
     func test_withEnvironmentConfig_nothingChosen() throws {
@@ -42,14 +42,14 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "pass", 1)
         setenv(KEY_NAME, "db-name", 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_HOST, "", 1)
         setenv(KEY_PORT, "", 1)
         setenv(KEY_USER, "", 1)
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is MySQLConfig)
     }
     
     func test_withEnvironmentConfig_inMemChosen() throws {
@@ -60,7 +60,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "pass", 1)
         setenv(KEY_NAME, "db-name", 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         setenv(KEY_HOST, "", 1)
         setenv(KEY_PORT, "", 1)
@@ -68,7 +68,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is InMemStorageConfig)
+        XCTAssertTrue(config is InMemConfig)
     }
     
     func test_withEnvironmentConfig_MySQLChosen_wrongData() throws {
@@ -79,7 +79,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, " ", 1)
         setenv(KEY_NAME, " ", 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         setenv(KEY_HOST, "", 1)
         setenv(KEY_PORT, "", 1)
@@ -87,7 +87,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "", 1)
         setenv(KEY_NAME, "", 1)
         
-        XCTAssertTrue(config is DevMySQLConfig)
+        XCTAssertTrue(config is DebugMySQLConfig)
     }
     
     func test_withEnvironmentConfig_MySQLChosen_noPort() throws {
@@ -97,7 +97,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "pass", 1)
         setenv(KEY_NAME, "db-name", 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         setenv(KEY_TYPE, "", 1)
         setenv(KEY_HOST, "", 1)
@@ -123,7 +123,7 @@ class StorageConfigResolverTest : XCTestCase {
         setenv(KEY_PASS, "pass", 1)
         setenv(KEY_NAME, "db-name", 1)
         
-        let config = StorageConfigResolver.resolve()
+        let config = PersistenceConfigResolver.resolve()
         setenv(KEY_TYPE, "", 1)
         setenv(KEY_HOST, "", 1)
         setenv(KEY_PORT, "", 1)
