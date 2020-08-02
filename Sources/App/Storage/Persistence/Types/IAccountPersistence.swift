@@ -15,14 +15,14 @@ class IAccountPersistence : IPersistence<Account> {
         self.timeProvider = timeProvider
     }
     
-    func findAllByName(_ name: String) throws -> NIO.EventLoopFuture<[Account]> { notImplemented() }
+    func findAllByName(_ name: String) throws -> NIO.EventLoopFuture<[Account]> { unsupported() }
     
-    func findAllByOwnerName(_ ownerName: String) throws -> NIO.EventLoopFuture<[Account]> { notImplemented() }
+    func findAllByOwnerName(_ ownerName: String) throws -> NIO.EventLoopFuture<[Account]> { unsupported() }
     
-    func findOneByEmail(_ email: String) throws -> NIO.EventLoopFuture<Account?> { notImplemented() }
+    func findOneByEmail(_ email: String) throws -> NIO.EventLoopFuture<Account?> { unsupported() }
     
-    func findAllByType(_ type: Account.AccountType) throws -> NIO.EventLoopFuture<[Account]> { notImplemented() }
+    func findAllByType(_ type: Account.AccountType) throws -> NIO.EventLoopFuture<[Account]> { unsupported() }
     
-    func findAllByAuthority(_ authority: Account.AccountAuthority) throws -> NIO.EventLoopFuture<[Account]> { notImplemented() }
+    func findAllByAuthority(_ authority: Account.AccountAuthority) throws -> NIO.EventLoopFuture<[Account]> { unsupported() }
     
 }

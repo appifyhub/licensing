@@ -11,13 +11,13 @@ class IPersistence<Model : HasPersistenceKey> {
 
     private let DEFAULT_LOOP = EmbeddedEventLoop()
 
-    func create(_ model: Model) throws -> EventLoopFuture<Model> { notImplemented() }
+    func create(_ model: Model) throws -> EventLoopFuture<Model> { unsupported() }
     
-    func read(_ key: Model.KeyType) throws -> EventLoopFuture<Model?> { notImplemented() }
+    func read(_ key: Model.KeyType) throws -> EventLoopFuture<Model?> { unsupported() }
     
-    func update(_ model: Model) throws -> EventLoopFuture<Model> { notImplemented() }
+    func update(_ model: Model) throws -> EventLoopFuture<Model> { unsupported() }
     
-    func delete(_ key: Model.KeyType) throws -> EventLoopFuture<Bool> { notImplemented() }
+    func delete(_ key: Model.KeyType) throws -> EventLoopFuture<Bool> { unsupported() }
         
 }
 
@@ -31,8 +31,8 @@ extension IPersistence {
         return DEFAULT_LOOP.newSucceededFuture(result: value)
     }
     
-    func notImplemented<T>() -> EventLoopFuture<T> {
-        return DEFAULT_LOOP.newFailedFuture(error: "Not implemented.")
+    func unsupported<T>() -> EventLoopFuture<T> {
+        return DEFAULT_LOOP.newFailedFuture(error: "Unsupported operation.")
     }
     
 }

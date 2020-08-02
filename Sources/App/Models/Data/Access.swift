@@ -2,11 +2,11 @@ import Foundation
 
 final class Access : Codable {
     
-    let token: String
+    let token: String?
     let accountID: Int
     let createdAt: Int64
     
-    init(token: String, accountID: Int, createdAt: Int64) {
+    init(token: String? = nil, accountID: Int, createdAt: Int64) {
         self.token = token
         self.accountID = accountID
         self.createdAt = createdAt
@@ -23,11 +23,26 @@ final class Access : Codable {
 // safe modifiers
 extension Access {
     
-    func withChangedToken(_ newToken: String) -> Access {
+    func tryWithChangedToken(_ newToken: String) -> Access {
+        let token: String
+        if let oldToken = self.token {
+            token = oldToken
+        } else {
+            token = newToken
+        }
+
         return Access(
-            token: newToken,
+            token: token,
             accountID: self.accountID,
             createdAt: self.createdAt
+        )
+    }
+
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Access {
+        return Access(
+            token: self.token,
+            accountID: self.accountID,
+            createdAt: timeProvider.epochMillis()
         )
     }
     
@@ -41,19 +56,19 @@ extension Access : Comparable {
     }
 
     static func < (lhs: Access, rhs: Access) -> Bool {
-        return lhs.token < rhs.token
+        return lhs.token! < rhs.token!
     }
     
     static func <= (lhs: Access, rhs: Access) -> Bool {
-        return lhs.token <= rhs.token
+        return lhs.token! <= rhs.token!
     }
     
     static func >= (lhs: Access, rhs: Access) -> Bool {
-        return lhs.token >= rhs.token
+        return lhs.token! >= rhs.token!
     }
     
     static func > (lhs: Access, rhs: Access) -> Bool {
-        return lhs.token > rhs.token
+        return lhs.token! > rhs.token!
     }
     
 }
