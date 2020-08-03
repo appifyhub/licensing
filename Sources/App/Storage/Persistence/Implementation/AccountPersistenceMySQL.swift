@@ -6,7 +6,6 @@ extension Account : SQLTable {}
 
 class AccountPersistenceMySQL : IAccountPersistence {
     
-    private var storage: [Int : Account] = [:]
     private let request: Request
     
     init(
