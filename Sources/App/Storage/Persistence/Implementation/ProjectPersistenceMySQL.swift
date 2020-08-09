@@ -2,9 +2,9 @@ import Foundation
 import Vapor
 import MySQL
 
-extension Account : SQLTable {}
+extension Project : SQLTable {}
 
-class AccountPersistenceMySQL : IAccountPersistence {
+class ProjectPersistenceMySQL : IProjectPersistence {
     
     private let request: Request
     
@@ -18,13 +18,13 @@ class AccountPersistenceMySQL : IAccountPersistence {
     
     // CRUD
     
-    override func create(_ model: Account) throws -> EventLoopFuture<Account> {
+    override func create(_ model: Project) throws -> EventLoopFuture<Project> {
         let newModel = model
             .withCurrentCreateTime(timeProvider)
             .withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             try connection
-                .insert(into: Account.self)
+                .insert(into: Project.self)
                 .value(newModel)
                 .run()
                 .flatMap { _ in try self.read( (connection.lastMetadata?.lastInsertID(as: Int.self))! )}
@@ -32,26 +32,26 @@ class AccountPersistenceMySQL : IAccountPersistence {
         }
     }
     
-    override func read(_ key: Int) throws -> EventLoopFuture<Account?> {
+    override func read(_ key: Int) throws -> EventLoopFuture<Project?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.ID == key)
+                .from(Project.self)
+                .where(\Project.ID == key)
                 .limit(1)
-                .all(decoding: Account.self)
+                .all(decoding: Project.self)
                 .map { results in results.first }
         }
     }
     
-    override func update(_ model: Account) throws -> EventLoopFuture<Account> {
+    override func update(_ model: Project) throws -> EventLoopFuture<Project> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             connection
-                .update(Account.self)
+                .update(Project.self)
                 .set(newModel)
-                .where(\Account.ID == newModel.ID!)
+                .where(\Project.ID == newModel.ID!)
                 .run()
                 .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
@@ -61,8 +61,8 @@ class AccountPersistenceMySQL : IAccountPersistence {
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
         return onConnected { connection in
             connection
-                .delete(from: Account.self)
-                .where(\Account.ID == key)
+                .delete(from: Project.self)
+                .where(\Project.ID == key)
                 .run()
                 .map { _ in true }
         }
@@ -70,60 +70,60 @@ class AccountPersistenceMySQL : IAccountPersistence {
     
     // Additional queries
     
-    override func findAllByName(_ name: String) throws -> EventLoopFuture<[Account]> {
+    override func findAllByAccount(id: Int) throws -> EventLoopFuture<[Project]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.name == name)
-                .all(decoding: Account.self)
+                .from(Project.self)
+                .where(\Project.accountID == id)
+                .all(decoding: Project.self)
         }
     }
     
-    override func findAllByOwnerName(_ ownerName: String) throws -> EventLoopFuture<[Account]> {
+    override func findOneByAccount(id: Int) throws -> EventLoopFuture<Project?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.ownerName == ownerName)
-                .all(decoding: Account.self)
-        }
-    }
-    
-    override func findOneByEmail(_ email: String) throws -> EventLoopFuture<Account?> {
-        return onConnected { connection in
-            connection
-                .select()
-                .all()
-                .from(Account.self)
-                .where(\Account.email == email)
+                .from(Project.self)
+                .where(\Project.accountID == id)
                 .limit(1)
-                .all(decoding: Account.self)
+                .all(decoding: Project.self)
                 .map { results in results.first }
         }
     }
     
-    override func findAllByType(_ type: Account.AccountType) throws -> EventLoopFuture<[Account]> {
+    override func findAllByName(_ name: String) throws -> EventLoopFuture<[Project]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.type == type)
-                .all(decoding: Account.self)
+                .from(Project.self)
+                .where(\Project.name == name)
+                .all(decoding: Project.self)
         }
     }
     
-    override func findAllByAuthority(_ authority: Account.AccountAuthority) throws -> EventLoopFuture<[Account]> {
+    override func findAllByType(_ type: Project.ProjectType) throws -> EventLoopFuture<[Project]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.authority == authority)
-                .all(decoding: Account.self)
+                .from(Project.self)
+                .where(\Project.type == type)
+                .all(decoding: Project.self)
+        }
+    }
+    
+    override func findAllByStatus(_ status: Project.ProjectStatus) throws -> EventLoopFuture<[Project]> {
+        return onConnected { connection in
+            connection
+                .select()
+                .all()
+                .from(Project.self)
+                .where(\Project.status == status)
+                .all(decoding: Project.self)
         }
     }
     
