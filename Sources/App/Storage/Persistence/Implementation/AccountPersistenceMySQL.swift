@@ -46,13 +46,14 @@ class AccountPersistenceMySQL : IAccountPersistence {
     }
     
     override func update(_ model: Account) throws -> EventLoopFuture<Account> {
+        let newModel = model.withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             connection
                 .update(Account.self)
-                .set(model)
-                .where(\Account.ID == model.ID!)
+                .set(newModel)
+                .where(\Account.ID == newModel.ID!)
                 .run()
-                .flatMap { _ in try self.read(model.ID!) }
+                .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
         }
     }
