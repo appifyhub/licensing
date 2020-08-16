@@ -28,10 +28,12 @@ final class DI {
     private lazy var accountCache: IAccountCache = { return AccountInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var accessCache: IAccessCache = { return AccessInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var projectCache: IProjectCache = { return ProjectInMemCache(maxSize: cacheConfig.maxStoredItems) }()
+    private lazy var serviceCache: IServiceCache = { return ServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     
     private lazy var accountMemPersistence: IAccountPersistence = { return AccountPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var accessMemPersistence: IAccessPersistence = { return AccessPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var projectMemPersistence: IProjectPersistence = { return ProjectPersistenceInMem(timeProvider: timeProvider) }()
+    private lazy var serviceMemPersistence: IServicePersistence = { return ServicePersistenceInMem(timeProvider: timeProvider) }()
     
     // Initializer
     
@@ -65,6 +67,12 @@ final class DI {
         return projectCache
     }
     
+    func getServiceCache() -> IServiceCache {
+        lock.wait()
+        defer { lock.signal() }
+        return serviceCache
+    }
+    
     // Persistence
     
     func getAccountPersistence(for request: Request) -> IAccountPersistence {
@@ -94,6 +102,16 @@ final class DI {
             // SQL works with a request, so a new instance is required every time
             case .mysql: return ProjectPersistenceMySQL(timeProvider: timeProvider, request: request)
             case .inmem: return projectMemPersistence
+        }
+    }
+    
+    func getServicePersistence(for request: Request) -> IServicePersistence {
+        lock.wait()
+        defer { lock.signal() }
+        switch persistenceConfig.type {
+            // SQL works with a request, so a new instance is required every time
+            case .mysql: return ServicePersistenceMySQL(timeProvider: timeProvider, request: request)
+            case .inmem: return serviceMemPersistence
         }
     }
     
