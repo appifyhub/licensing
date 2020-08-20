@@ -71,24 +71,24 @@ class AccessPersistenceMySQL : IAccessPersistence {
     
     // Additional queries
     
-    override func findAllByAccountID(_ accountID: Int) throws -> EventLoopFuture<[Access]> {
+    override func findAllByAccount(id: Int) throws -> EventLoopFuture<[Access]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
                 .from(Access.self)
-                .where(\Access.accountID == accountID)
+                .where(\Access.accountID == id)
                 .all(decoding: Access.self)
         }
     }
     
-    override func findOneByAccountID(_ accountID: Int) throws -> EventLoopFuture<Access?> {
+    override func findOneByAccount(id: Int) throws -> EventLoopFuture<Access?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
                 .from(Access.self)
-                .where(\Access.accountID == accountID)
+                .where(\Access.accountID == id)
                 .limit(1)
                 .all(decoding: Access.self)
                 .map { results in results.first }

@@ -15,8 +15,8 @@ class IAccessPersistence : IPersistence<Access> {
         self.timeProvider = timeProvider
     }
     
-    func findAllByAccountID(_ accountID: Int) throws -> NIO.EventLoopFuture<[Access]> { unsupported() }
+    func findAllByAccount(id: Int) throws -> NIO.EventLoopFuture<[Access]> { unsupported() }
     
-    func findOneByAccountID(_ accountID: Int) throws -> NIO.EventLoopFuture<Access?> { unsupported() }
+    func findOneByAccount(id: Int) throws -> NIO.EventLoopFuture<Access?> { unsupported() }
     
 }

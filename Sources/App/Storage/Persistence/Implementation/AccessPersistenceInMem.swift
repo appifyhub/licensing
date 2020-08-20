@@ -38,13 +38,13 @@ class AccessPersistenceInMem : IAccessPersistence {
     
     // Additional queries
     
-    override func findAllByAccountID(_ accountID: Int) throws -> EventLoopFuture<[Access]> {
-        let result = filterValues { access in accountID == access.accountID }
+    override func findAllByAccount(id: Int) throws -> EventLoopFuture<[Access]> {
+        let result = filterValues { access in id == access.accountID }
         return success(result)
     }
     
-    override func findOneByAccountID(_ accountID: Int) throws -> EventLoopFuture<Access?> {
-        let result = filterValues { access in accountID == access.accountID }
+    override func findOneByAccount(id: Int) throws -> EventLoopFuture<Access?> {
+        let result = filterValues { access in id == access.accountID }
         return success(result.first)
     }
     
