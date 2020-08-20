@@ -29,11 +29,13 @@ final class DI {
     private lazy var accessCache: IAccessCache = { return AccessInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var projectCache: IProjectCache = { return ProjectInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var serviceCache: IServiceCache = { return ServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
+    private lazy var propertyCache: IPropertyCache = { return PropertyInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     
     private lazy var accountMemPersistence: IAccountPersistence = { return AccountPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var accessMemPersistence: IAccessPersistence = { return AccessPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var projectMemPersistence: IProjectPersistence = { return ProjectPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var serviceMemPersistence: IServicePersistence = { return ServicePersistenceInMem(timeProvider: timeProvider) }()
+    private lazy var propertyMemPersistence: IPropertyPersistence = { return PropertyPersistenceInMem(timeProvider: timeProvider) }()
     
     // Initializer
     
@@ -71,6 +73,12 @@ final class DI {
         lock.wait()
         defer { lock.signal() }
         return serviceCache
+    }
+    
+    func getPropertyCache() -> IPropertyCache {
+        lock.wait()
+        defer { lock.signal() }
+        return propertyCache
     }
     
     // Persistence
@@ -112,6 +120,16 @@ final class DI {
             // SQL works with a request, so a new instance is required every time
             case .mysql: return ServicePersistenceMySQL(timeProvider: timeProvider, request: request)
             case .inmem: return serviceMemPersistence
+        }
+    }
+    
+    func getPropertyPersistence(for request: Request) -> IPropertyPersistence {
+        lock.wait()
+        defer { lock.signal() }
+        switch persistenceConfig.type {
+            // SQL works with a request, so a new instance is required every time
+            case .mysql: return PropertyPersistenceMySQL(timeProvider: timeProvider, request: request)
+            case .inmem: return propertyMemPersistence
         }
     }
     
