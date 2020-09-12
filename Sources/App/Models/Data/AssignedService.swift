@@ -11,7 +11,7 @@ final class AssignedService : Codable {
         ID: Int? = nil,
         projectID: Int,
         serviceID: Int,
-        assignedAt: Int64
+        assignedAt: Int64 = 0
     ) {
         self.ID = ID
         self.projectID = projectID
@@ -44,6 +44,15 @@ extension AssignedService {
             projectID: self.projectID,
             serviceID: self.serviceID,
             assignedAt: self.assignedAt
+        )
+    }
+    
+    func withCurrentAssignmentTime(_ timeProvider: TimeProvider) -> AssignedService {
+        return AssignedService(
+            ID: ID,
+            projectID: self.projectID,
+            serviceID: self.serviceID,
+            assignedAt: timeProvider.epochMillis()
         )
     }
     
