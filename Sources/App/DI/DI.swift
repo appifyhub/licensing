@@ -30,12 +30,14 @@ final class DI {
     private lazy var projectCache: IProjectCache = { return ProjectInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var serviceCache: IServiceCache = { return ServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var propertyCache: IPropertyCache = { return PropertyInMemCache(maxSize: cacheConfig.maxStoredItems) }()
+    private lazy var assignedServiceCache: IAssignedServiceCache = { return AssignedServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     
     private lazy var accountMemPersistence: IAccountPersistence = { return AccountPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var accessMemPersistence: IAccessPersistence = { return AccessPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var projectMemPersistence: IProjectPersistence = { return ProjectPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var serviceMemPersistence: IServicePersistence = { return ServicePersistenceInMem(timeProvider: timeProvider) }()
     private lazy var propertyMemPersistence: IPropertyPersistence = { return PropertyPersistenceInMem(timeProvider: timeProvider) }()
+    private lazy var assignedServiceMemPersistence: IAssignedServicePersistence = { return AssignedServicePersistenceInMem(timeProvider: timeProvider) }()
     
     // Initializer
     
@@ -79,6 +81,12 @@ final class DI {
         lock.wait()
         defer { lock.signal() }
         return propertyCache
+    }
+    
+    func getAssignedServiceCache() -> IAssignedServiceCache {
+        lock.wait()
+        defer { lock.signal() }
+        return assignedServiceCache
     }
     
     // Persistence
@@ -130,6 +138,16 @@ final class DI {
             // SQL works with a request, so a new instance is required every time
             case .mysql: return PropertyPersistenceMySQL(timeProvider: timeProvider, request: request)
             case .inmem: return propertyMemPersistence
+        }
+    }
+    
+    func getAssignedServicePersistence(for request: Request) -> IAssignedServicePersistence {
+        lock.wait()
+        defer { lock.signal() }
+        switch persistenceConfig.type {
+            // SQL works with a request, so a new instance is required every time
+            case .mysql: return AssignedServicePersistenceMySQL(timeProvider: timeProvider, request: request)
+            case .inmem: return assignedServiceMemPersistence
         }
     }
     
