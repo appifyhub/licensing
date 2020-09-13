@@ -31,6 +31,7 @@ final class DI {
     private lazy var serviceCache: IServiceCache = { return ServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var propertyCache: IPropertyCache = { return PropertyInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     private lazy var assignedServiceCache: IAssignedServiceCache = { return AssignedServiceInMemCache(maxSize: cacheConfig.maxStoredItems) }()
+    private lazy var configuredPropertyCache: IConfiguredPropertyCache = { return ConfiguredPropertyInMemCache(maxSize: cacheConfig.maxStoredItems) }()
     
     private lazy var accountMemPersistence: IAccountPersistence = { return AccountPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var accessMemPersistence: IAccessPersistence = { return AccessPersistenceInMem(timeProvider: timeProvider) }()
@@ -38,6 +39,7 @@ final class DI {
     private lazy var serviceMemPersistence: IServicePersistence = { return ServicePersistenceInMem(timeProvider: timeProvider) }()
     private lazy var propertyMemPersistence: IPropertyPersistence = { return PropertyPersistenceInMem(timeProvider: timeProvider) }()
     private lazy var assignedServiceMemPersistence: IAssignedServicePersistence = { return AssignedServicePersistenceInMem(timeProvider: timeProvider) }()
+    private lazy var configuredPropertyMemPersistence: IConfiguredPropertyPersistence = { return ConfiguredPropertyPersistenceInMem(timeProvider: timeProvider) }()
     
     // Initializer
     
@@ -87,6 +89,12 @@ final class DI {
         lock.wait()
         defer { lock.signal() }
         return assignedServiceCache
+    }
+    
+    func getConfiguredPropertyCache() -> IConfiguredPropertyCache {
+        lock.wait()
+        defer { lock.signal() }
+        return configuredPropertyCache
     }
     
     // Persistence
@@ -148,6 +156,16 @@ final class DI {
             // SQL works with a request, so a new instance is required every time
             case .mysql: return AssignedServicePersistenceMySQL(timeProvider: timeProvider, request: request)
             case .inmem: return assignedServiceMemPersistence
+        }
+    }
+    
+    func getConfiguredPropertyPersistence(for request: Request) -> IConfiguredPropertyPersistence {
+        lock.wait()
+        defer { lock.signal() }
+        switch persistenceConfig.type {
+            // SQL works with a request, so a new instance is required every time
+            case .mysql: return ConfiguredPropertyPersistenceMySQL(timeProvider: timeProvider, request: request)
+            case .inmem: return configuredPropertyMemPersistence
         }
     }
     

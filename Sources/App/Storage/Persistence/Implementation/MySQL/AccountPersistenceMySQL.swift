@@ -2,7 +2,9 @@ import Foundation
 import Vapor
 import MySQL
 
-extension Account : SQLTable {}
+extension AccountDbm : SQLTable {
+    static var sqlTableIdentifierString: String = "Account"
+}
 
 class AccountPersistenceMySQL : IAccountPersistence {
     
@@ -18,13 +20,13 @@ class AccountPersistenceMySQL : IAccountPersistence {
     
     // CRUD
     
-    override func create(_ model: Account) throws -> EventLoopFuture<Account> {
+    override func create(_ model: AccountDbm) throws -> EventLoopFuture<AccountDbm> {
         let newModel = model
             .withCurrentCreateTime(timeProvider)
             .withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             try connection
-                .insert(into: Account.self)
+                .insert(into: AccountDbm.self)
                 .value(newModel)
                 .run()
                 .flatMap { _ in try self.read( (connection.lastMetadata?.lastInsertID(as: Int.self))! )}
@@ -32,26 +34,26 @@ class AccountPersistenceMySQL : IAccountPersistence {
         }
     }
     
-    override func read(_ key: Int) throws -> EventLoopFuture<Account?> {
+    override func read(_ key: Int) throws -> EventLoopFuture<AccountDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.ID == key)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.ID == key)
                 .limit(1)
-                .all(decoding: Account.self)
+                .all(decoding: AccountDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func update(_ model: Account) throws -> EventLoopFuture<Account> {
+    override func update(_ model: AccountDbm) throws -> EventLoopFuture<AccountDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             connection
-                .update(Account.self)
+                .update(AccountDbm.self)
                 .set(newModel)
-                .where(\Account.ID == newModel.ID!)
+                .where(\AccountDbm.ID == newModel.ID!)
                 .run()
                 .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
@@ -61,8 +63,8 @@ class AccountPersistenceMySQL : IAccountPersistence {
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
         return onConnected { connection in
             connection
-                .delete(from: Account.self)
-                .where(\Account.ID == key)
+                .delete(from: AccountDbm.self)
+                .where(\AccountDbm.ID == key)
                 .run()
                 .map { _ in true }
         }
@@ -70,60 +72,60 @@ class AccountPersistenceMySQL : IAccountPersistence {
     
     // Additional queries
     
-    override func findAllByName(_ name: String) throws -> EventLoopFuture<[Account]> {
+    override func findAllByName(_ name: String) throws -> EventLoopFuture<[AccountDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.name == name)
-                .all(decoding: Account.self)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.name == name)
+                .all(decoding: AccountDbm.self)
         }
     }
     
-    override func findAllByOwnerName(_ ownerName: String) throws -> EventLoopFuture<[Account]> {
+    override func findAllByOwnerName(_ ownerName: String) throws -> EventLoopFuture<[AccountDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.ownerName == ownerName)
-                .all(decoding: Account.self)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.ownerName == ownerName)
+                .all(decoding: AccountDbm.self)
         }
     }
     
-    override func findOneByEmail(_ email: String) throws -> EventLoopFuture<Account?> {
+    override func findOneByEmail(_ email: String) throws -> EventLoopFuture<AccountDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.email == email)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.email == email)
                 .limit(1)
-                .all(decoding: Account.self)
+                .all(decoding: AccountDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func findAllByType(_ type: Account.AccountType) throws -> EventLoopFuture<[Account]> {
+    override func findAllByType(_ type: AccountDbm.AccountType) throws -> EventLoopFuture<[AccountDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.type == type)
-                .all(decoding: Account.self)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.type == type)
+                .all(decoding: AccountDbm.self)
         }
     }
     
-    override func findAllByAuthority(_ authority: Account.AccountAuthority) throws -> EventLoopFuture<[Account]> {
+    override func findAllByAuthority(_ authority: AccountDbm.AccountAuthority) throws -> EventLoopFuture<[AccountDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Account.self)
-                .where(\Account.authority == authority)
-                .all(decoding: Account.self)
+                .from(AccountDbm.self)
+                .where(\AccountDbm.authority == authority)
+                .all(decoding: AccountDbm.self)
         }
     }
     

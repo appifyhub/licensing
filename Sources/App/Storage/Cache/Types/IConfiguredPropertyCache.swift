@@ -1,10 +1,10 @@
 import Foundation
 
-extension ProjectDbm : HasCacheKey {
+extension ConfiguredPropertyDbm : HasCacheKey {
     var cacheKey: AnyHashable {
         AnyHashable(ID ?? 0)
     }
 }
 
 /// This can't be a protocol because associatedTypes are nonsense.
-class IProjectCache : ICache<ProjectDbm> { }
+class IConfiguredPropertyCache : ICache<ConfiguredPropertyDbm> { }

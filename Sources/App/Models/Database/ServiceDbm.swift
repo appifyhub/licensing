@@ -1,6 +1,6 @@
 import Foundation
 
-final class Service : Codable {
+final class ServiceDbm : Codable {
     
     let ID: Int?
     let name: String
@@ -12,8 +12,8 @@ final class Service : Codable {
         ID: Int? = nil,
         name: String,
         description: String,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.name = name
@@ -33,9 +33,9 @@ final class Service : Codable {
 }
 
 // safe modifiers
-extension Service {
+extension ServiceDbm {
     
-    func tryWithChangedID(_ newID: Int) -> Service {
+    func tryWithChangedID(_ newID: Int) -> ServiceDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -43,7 +43,7 @@ extension Service {
             ID = newID
         }
         
-        return Service(
+        return ServiceDbm(
             ID: ID,
             name: self.name,
             description: self.description,
@@ -52,8 +52,8 @@ extension Service {
         )
     }
     
-    func withChangedName(_ newName: String) -> Service {
-        return Service(
+    func withChangedName(_ newName: String) -> ServiceDbm {
+        return ServiceDbm(
             ID: self.ID,
             name: newName,
             description: description,
@@ -62,8 +62,8 @@ extension Service {
         )
     }
     
-    func withChangedDescription(_ newDescription: String) -> Service {
-        return Service(
+    func withChangedDescription(_ newDescription: String) -> ServiceDbm {
+        return ServiceDbm(
             ID: self.ID,
             name: self.name,
             description: newDescription,
@@ -72,8 +72,8 @@ extension Service {
         )
     }
     
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Service {
-        return Service(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> ServiceDbm {
+        return ServiceDbm(
             ID: self.ID,
             name: self.name,
             description: self.description,
@@ -82,8 +82,8 @@ extension Service {
         )
     }
     
-    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Service {
-        return Service(
+    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> ServiceDbm {
+        return ServiceDbm(
             ID: self.ID,
             name: self.name,
             description: self.description,
@@ -94,27 +94,27 @@ extension Service {
     
 }
 
-extension Service : Comparable {
+extension ServiceDbm : Comparable {
     
-    static func == (lhs: Service, rhs: Service) -> Bool {
+    static func == (lhs: ServiceDbm, rhs: ServiceDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.name == rhs.name &&
             lhs.description == rhs.description
     }
     
-    static func < (lhs: Service, rhs: Service) -> Bool {
+    static func < (lhs: ServiceDbm, rhs: ServiceDbm) -> Bool {
         return lhs.name < rhs.name
     }
     
-    static func <= (lhs: Service, rhs: Service) -> Bool {
+    static func <= (lhs: ServiceDbm, rhs: ServiceDbm) -> Bool {
         return lhs.name <= rhs.name
     }
     
-    static func >= (lhs: Service, rhs: Service) -> Bool {
+    static func >= (lhs: ServiceDbm, rhs: ServiceDbm) -> Bool {
         return lhs.name >= rhs.name
     }
     
-    static func > (lhs: Service, rhs: Service) -> Bool {
+    static func > (lhs: ServiceDbm, rhs: ServiceDbm) -> Bool {
         return lhs.name > rhs.name
     }
     

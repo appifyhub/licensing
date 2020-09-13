@@ -1,6 +1,6 @@
 import Foundation
 
-final class AssignedService : Codable {
+final class AssignedServiceDbm : Codable {
     
     let ID: Int?
     let projectID: Int
@@ -29,9 +29,9 @@ final class AssignedService : Codable {
 }
 
 // safe modifiers
-extension AssignedService {
+extension AssignedServiceDbm {
     
-    func tryWithChangedID(_ newID: Int) -> AssignedService {
+    func tryWithChangedID(_ newID: Int) -> AssignedServiceDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -39,7 +39,7 @@ extension AssignedService {
             ID = newID
         }
         
-        return AssignedService(
+        return AssignedServiceDbm(
             ID: ID,
             projectID: self.projectID,
             serviceID: self.serviceID,
@@ -47,8 +47,8 @@ extension AssignedService {
         )
     }
     
-    func withCurrentAssignmentTime(_ timeProvider: TimeProvider) -> AssignedService {
-        return AssignedService(
+    func withCurrentAssignmentTime(_ timeProvider: TimeProvider) -> AssignedServiceDbm {
+        return AssignedServiceDbm(
             ID: ID,
             projectID: self.projectID,
             serviceID: self.serviceID,
@@ -58,27 +58,27 @@ extension AssignedService {
     
 }
 
-extension AssignedService : Comparable {
+extension AssignedServiceDbm : Comparable {
     
-    static func == (lhs: AssignedService, rhs: AssignedService) -> Bool {
+    static func == (lhs: AssignedServiceDbm, rhs: AssignedServiceDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.projectID == rhs.projectID &&
             lhs.serviceID == rhs.serviceID
     }
     
-    static func < (lhs: AssignedService, rhs: AssignedService) -> Bool {
+    static func < (lhs: AssignedServiceDbm, rhs: AssignedServiceDbm) -> Bool {
         return lhs.serviceID < rhs.serviceID
     }
     
-    static func <= (lhs: AssignedService, rhs: AssignedService) -> Bool {
+    static func <= (lhs: AssignedServiceDbm, rhs: AssignedServiceDbm) -> Bool {
         return lhs.serviceID <= rhs.serviceID
     }
     
-    static func >= (lhs: AssignedService, rhs: AssignedService) -> Bool {
+    static func >= (lhs: AssignedServiceDbm, rhs: AssignedServiceDbm) -> Bool {
         return lhs.serviceID >= rhs.serviceID
     }
     
-    static func > (lhs: AssignedService, rhs: AssignedService) -> Bool {
+    static func > (lhs: AssignedServiceDbm, rhs: AssignedServiceDbm) -> Bool {
         return lhs.serviceID > rhs.serviceID
     }
     

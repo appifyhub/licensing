@@ -2,7 +2,9 @@ import Foundation
 import Vapor
 import MySQL
 
-extension Project : SQLTable {}
+extension ProjectDbm : SQLTable {
+    static var sqlTableIdentifierString: String = "Project"
+}
 
 class ProjectPersistenceMySQL : IProjectPersistence {
     
@@ -18,13 +20,13 @@ class ProjectPersistenceMySQL : IProjectPersistence {
     
     // CRUD
     
-    override func create(_ model: Project) throws -> EventLoopFuture<Project> {
+    override func create(_ model: ProjectDbm) throws -> EventLoopFuture<ProjectDbm> {
         let newModel = model
             .withCurrentCreateTime(timeProvider)
             .withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             try connection
-                .insert(into: Project.self)
+                .insert(into: ProjectDbm.self)
                 .value(newModel)
                 .run()
                 .flatMap { _ in try self.read( (connection.lastMetadata?.lastInsertID(as: Int.self))! )}
@@ -32,26 +34,26 @@ class ProjectPersistenceMySQL : IProjectPersistence {
         }
     }
     
-    override func read(_ key: Int) throws -> EventLoopFuture<Project?> {
+    override func read(_ key: Int) throws -> EventLoopFuture<ProjectDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.ID == key)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.ID == key)
                 .limit(1)
-                .all(decoding: Project.self)
+                .all(decoding: ProjectDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func update(_ model: Project) throws -> EventLoopFuture<Project> {
+    override func update(_ model: ProjectDbm) throws -> EventLoopFuture<ProjectDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             connection
-                .update(Project.self)
+                .update(ProjectDbm.self)
                 .set(newModel)
-                .where(\Project.ID == newModel.ID!)
+                .where(\ProjectDbm.ID == newModel.ID!)
                 .run()
                 .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
@@ -61,8 +63,8 @@ class ProjectPersistenceMySQL : IProjectPersistence {
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
         return onConnected { connection in
             connection
-                .delete(from: Project.self)
-                .where(\Project.ID == key)
+                .delete(from: ProjectDbm.self)
+                .where(\ProjectDbm.ID == key)
                 .run()
                 .map { _ in true }
         }
@@ -70,60 +72,60 @@ class ProjectPersistenceMySQL : IProjectPersistence {
     
     // Additional queries
     
-    override func findAllByAccount(id: Int) throws -> EventLoopFuture<[Project]> {
+    override func findAllByAccount(id: Int) throws -> EventLoopFuture<[ProjectDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.accountID == id)
-                .all(decoding: Project.self)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.accountID == id)
+                .all(decoding: ProjectDbm.self)
         }
     }
     
-    override func findOneByAccount(id: Int) throws -> EventLoopFuture<Project?> {
+    override func findOneByAccount(id: Int) throws -> EventLoopFuture<ProjectDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.accountID == id)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.accountID == id)
                 .limit(1)
-                .all(decoding: Project.self)
+                .all(decoding: ProjectDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func findAllByName(_ name: String) throws -> EventLoopFuture<[Project]> {
+    override func findAllByName(_ name: String) throws -> EventLoopFuture<[ProjectDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.name == name)
-                .all(decoding: Project.self)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.name == name)
+                .all(decoding: ProjectDbm.self)
         }
     }
     
-    override func findAllByType(_ type: Project.ProjectType) throws -> EventLoopFuture<[Project]> {
+    override func findAllByType(_ type: ProjectDbm.ProjectType) throws -> EventLoopFuture<[ProjectDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.type == type)
-                .all(decoding: Project.self)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.type == type)
+                .all(decoding: ProjectDbm.self)
         }
     }
     
-    override func findAllByStatus(_ status: Project.ProjectStatus) throws -> EventLoopFuture<[Project]> {
+    override func findAllByStatus(_ status: ProjectDbm.ProjectStatus) throws -> EventLoopFuture<[ProjectDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Project.self)
-                .where(\Project.status == status)
-                .all(decoding: Project.self)
+                .from(ProjectDbm.self)
+                .where(\ProjectDbm.status == status)
+                .all(decoding: ProjectDbm.self)
         }
     }
     

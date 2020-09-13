@@ -1,13 +1,13 @@
 import Foundation
 import NIO
 
-extension Service : HasPersistenceKey {
+extension ServiceDbm : HasPersistenceKey {
     typealias KeyType = Int
     
     var persistenceKey: Int { ID ?? 0 }
 }
 
-class IServicePersistence : IPersistence<Service> {
+class IServicePersistence : IPersistence<ServiceDbm> {
     
     let timeProvider: TimeProvider
     
@@ -15,6 +15,6 @@ class IServicePersistence : IPersistence<Service> {
         self.timeProvider = timeProvider
     }
     
-    func findOneByName(_ name: String) throws -> NIO.EventLoopFuture<Service?> { unsupported() }
+    func findOneByName(_ name: String) throws -> NIO.EventLoopFuture<ServiceDbm?> { unsupported() }
     
 }

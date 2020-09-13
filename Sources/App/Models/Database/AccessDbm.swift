@@ -1,12 +1,16 @@
 import Foundation
 
-final class Access : Codable {
+final class AccessDbm : Codable {
     
     let token: String?
     let accountID: Int
     let createdAt: Int64
     
-    init(token: String? = nil, accountID: Int, createdAt: Int64) {
+    init(
+        token: String? = nil,
+        accountID: Int,
+        createdAt: Int64 = 0
+    ) {
         self.token = token
         self.accountID = accountID
         self.createdAt = createdAt
@@ -21,9 +25,9 @@ final class Access : Codable {
 }
 
 // safe modifiers
-extension Access {
+extension AccessDbm {
     
-    func tryWithChangedToken(_ newToken: String) -> Access {
+    func tryWithChangedToken(_ newToken: String) -> AccessDbm {
         let token: String
         if let oldToken = self.token {
             token = oldToken
@@ -31,15 +35,15 @@ extension Access {
             token = newToken
         }
 
-        return Access(
+        return AccessDbm(
             token: token,
             accountID: self.accountID,
             createdAt: self.createdAt
         )
     }
 
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Access {
-        return Access(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> AccessDbm {
+        return AccessDbm(
             token: self.token,
             accountID: self.accountID,
             createdAt: timeProvider.epochMillis()
@@ -48,26 +52,26 @@ extension Access {
     
 }
 
-extension Access : Comparable {
+extension AccessDbm : Comparable {
     
-    static func == (lhs: Access, rhs: Access) -> Bool {
+    static func == (lhs: AccessDbm, rhs: AccessDbm) -> Bool {
         return lhs.token == rhs.token &&
             lhs.accountID == rhs.accountID
     }
 
-    static func < (lhs: Access, rhs: Access) -> Bool {
+    static func < (lhs: AccessDbm, rhs: AccessDbm) -> Bool {
         return lhs.token! < rhs.token!
     }
     
-    static func <= (lhs: Access, rhs: Access) -> Bool {
+    static func <= (lhs: AccessDbm, rhs: AccessDbm) -> Bool {
         return lhs.token! <= rhs.token!
     }
     
-    static func >= (lhs: Access, rhs: Access) -> Bool {
+    static func >= (lhs: AccessDbm, rhs: AccessDbm) -> Bool {
         return lhs.token! >= rhs.token!
     }
     
-    static func > (lhs: Access, rhs: Access) -> Bool {
+    static func > (lhs: AccessDbm, rhs: AccessDbm) -> Bool {
         return lhs.token! > rhs.token!
     }
     

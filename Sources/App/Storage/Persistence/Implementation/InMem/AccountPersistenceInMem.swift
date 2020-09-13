@@ -3,7 +3,7 @@ import NIO
 
 class AccountPersistenceInMem : IAccountPersistence {
     
-    private var storage: [Int : Account] = [:]
+    private var storage: [Int : AccountDbm] = [:]
     private var currentId = AtomicInteger(value: 0)
     
     override init(timeProvider: TimeProvider) {
@@ -12,7 +12,7 @@ class AccountPersistenceInMem : IAccountPersistence {
     
     // CRUD
     
-    override func create(_ model: Account) -> EventLoopFuture<Account> {
+    override func create(_ model: AccountDbm) -> EventLoopFuture<AccountDbm> {
         let newModel = model
             .tryWithChangedID(currentId.incrementAndGet())
             .withCurrentCreateTime(timeProvider)
@@ -21,11 +21,11 @@ class AccountPersistenceInMem : IAccountPersistence {
         return success(newModel)
     }
     
-    override func read(_ key: Int) -> EventLoopFuture<Account?> {
+    override func read(_ key: Int) -> EventLoopFuture<AccountDbm?> {
         return success(storage[key])
     }
     
-    override func update(_ model: Account) -> EventLoopFuture<Account> {
+    override func update(_ model: AccountDbm) -> EventLoopFuture<AccountDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         storage[newModel.persistenceKey] = newModel
         return success(newModel)
@@ -38,35 +38,35 @@ class AccountPersistenceInMem : IAccountPersistence {
     
     // Additional queries
     
-    override func findAllByName(_ name: String) -> EventLoopFuture<[Account]> {
+    override func findAllByName(_ name: String) -> EventLoopFuture<[AccountDbm]> {
         let result = filterValues { account in name == account.name }
         return success(result)
     }
     
-    override func findAllByOwnerName(_ ownerName: String) -> EventLoopFuture<[Account]> {
+    override func findAllByOwnerName(_ ownerName: String) -> EventLoopFuture<[AccountDbm]> {
         let result = filterValues { account in ownerName == account.ownerName }
         return success(result)
     }
     
-    override func findOneByEmail(_ email: String) -> EventLoopFuture<Account?> {
+    override func findOneByEmail(_ email: String) -> EventLoopFuture<AccountDbm?> {
         let result = filterValues { account in email == account.email }
         return success(result.first)
     }
     
-    override func findAllByType(_ type: Account.AccountType) -> EventLoopFuture<[Account]> {
+    override func findAllByType(_ type: AccountDbm.AccountType) -> EventLoopFuture<[AccountDbm]> {
         let result = filterValues { account in type == account.type }
         return success(result)
     }
     
-    override func findAllByAuthority(_ authority: Account.AccountAuthority) -> EventLoopFuture<[Account]> {
+    override func findAllByAuthority(_ authority: AccountDbm.AccountAuthority) -> EventLoopFuture<[AccountDbm]> {
         let result = filterValues { account in authority == account.authority }
         return success(result)
     }
     
     // Helpers
     
-    private func filterValues(_ filter: (Account) -> Bool) -> [Account] {
-        return storage.map { key, value -> Account in value }.filter(filter)
+    private func filterValues(_ filter: (AccountDbm) -> Bool) -> [AccountDbm] {
+        return storage.map { key, value -> AccountDbm in value }.filter(filter)
     }
     
 }

@@ -3,7 +3,7 @@ import NIO
 
 class AssignedServicePersistenceInMem : IAssignedServicePersistence {
     
-    private var storage: [Int : AssignedService] = [:]
+    private var storage: [Int : AssignedServiceDbm] = [:]
     private var currentId = AtomicInteger(value: 0)
     
     override init(timeProvider: TimeProvider) {
@@ -12,7 +12,7 @@ class AssignedServicePersistenceInMem : IAssignedServicePersistence {
     
     // CRUD
     
-    override func create(_ model: AssignedService) -> EventLoopFuture<AssignedService> {
+    override func create(_ model: AssignedServiceDbm) -> EventLoopFuture<AssignedServiceDbm> {
         let newModel = model
             .tryWithChangedID(currentId.incrementAndGet())
             .withCurrentAssignmentTime(timeProvider)
@@ -20,12 +20,14 @@ class AssignedServicePersistenceInMem : IAssignedServicePersistence {
         return success(newModel)
     }
     
-    override func read(_ key: Int) -> EventLoopFuture<AssignedService?> {
+    override func read(_ key: Int) -> EventLoopFuture<AssignedServiceDbm?> {
         return success(storage[key])
     }
     
-    override func update(_ model: AssignedService) -> EventLoopFuture<AssignedService> {
-        return success(model)
+    override func update(_ model: AssignedServiceDbm) -> EventLoopFuture<AssignedServiceDbm> {
+        let newModel = model.withCurrentAssignmentTime(timeProvider)
+        storage[newModel.persistenceKey] = newModel
+        return success(newModel)
     }
     
     override func delete(_ key: Int) -> EventLoopFuture<Bool> {
@@ -35,40 +37,40 @@ class AssignedServicePersistenceInMem : IAssignedServicePersistence {
     
     // Additional queries
     
-    override func findAllByProject(id: Int) throws -> NIO.EventLoopFuture<[AssignedService]> {
+    override func findAllByProject(id: Int) throws -> NIO.EventLoopFuture<[AssignedServiceDbm]> {
         let result = filterValues { assignedService in id == assignedService.projectID }
         return success(result)
     }
     
-    override func findOneByProject(id: Int) throws -> NIO.EventLoopFuture<AssignedService?> {
+    override func findOneByProject(id: Int) throws -> NIO.EventLoopFuture<AssignedServiceDbm?> {
         let result = filterValues { assignedService in id == assignedService.projectID }
         return success(result.first)
     }
     
-    override func findAllByService(id: Int) throws -> NIO.EventLoopFuture<[AssignedService]> {
+    override func findAllByService(id: Int) throws -> NIO.EventLoopFuture<[AssignedServiceDbm]> {
         let result = filterValues { assignedService in id == assignedService.serviceID }
         return success(result)
     }
     
-    override func findOneByService(id: Int) throws -> NIO.EventLoopFuture<AssignedService?> {
+    override func findOneByService(id: Int) throws -> NIO.EventLoopFuture<AssignedServiceDbm?> {
         let result = filterValues { assignedService in id == assignedService.serviceID }
         return success(result.first)
     }
     
-    override func findAllByProjectAndService(projectID: Int, serviceID: Int) throws -> NIO.EventLoopFuture<[AssignedService]> {
+    override func findAllByProjectAndService(projectID: Int, serviceID: Int) throws -> NIO.EventLoopFuture<[AssignedServiceDbm]> {
         let result = filterValues { assignedService in projectID == assignedService.projectID && serviceID == assignedService.serviceID }
         return success(result)
     }
     
-    override func findOneByProjectAndService(projectID: Int, serviceID: Int) throws -> NIO.EventLoopFuture<AssignedService?> {
+    override func findOneByProjectAndService(projectID: Int, serviceID: Int) throws -> NIO.EventLoopFuture<AssignedServiceDbm?> {
         let result = filterValues { assignedService in projectID == assignedService.projectID && serviceID == assignedService.serviceID }
         return success(result.first)
     }
     
     // Helpers
     
-    private func filterValues(_ filter: (AssignedService) -> Bool) -> [AssignedService] {
-        return storage.map { key, value -> AssignedService in value }.filter(filter)
+    private func filterValues(_ filter: (AssignedServiceDbm) -> Bool) -> [AssignedServiceDbm] {
+        return storage.map { key, value -> AssignedServiceDbm in value }.filter(filter)
     }
     
 }

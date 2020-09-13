@@ -1,7 +1,7 @@
 import Foundation
 import MySQL
 
-final class Project : Codable {
+final class ProjectDbm : Codable {
     
     enum ProjectType : UInt8, Codable, CaseIterable, ReflectionDecodable {
         case opensource = 1
@@ -30,8 +30,8 @@ final class Project : Codable {
         name: String,
         type: ProjectType,
         status: ProjectStatus,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.accountID = accountID
@@ -55,9 +55,9 @@ final class Project : Codable {
 }
 
 // safe modifiers
-extension Project {
+extension ProjectDbm {
     
-    func tryWithChangedID(_ newID: Int) -> Project {
+    func tryWithChangedID(_ newID: Int) -> ProjectDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -65,7 +65,7 @@ extension Project {
             ID = newID
         }
         
-        return Project(
+        return ProjectDbm(
             ID: ID,
             accountID: self.accountID,
             name: self.name,
@@ -76,8 +76,8 @@ extension Project {
         )
     }
     
-    func withChangedName(_ newName: String) -> Project {
-        return Project(
+    func withChangedName(_ newName: String) -> ProjectDbm {
+        return ProjectDbm(
             ID: self.ID,
             accountID: self.accountID,
             name: newName,
@@ -88,8 +88,8 @@ extension Project {
         )
     }
     
-    func withChangedType(_ newType: ProjectType) -> Project {
-        return Project(
+    func withChangedType(_ newType: ProjectType) -> ProjectDbm {
+        return ProjectDbm(
             ID: self.ID,
             accountID: self.accountID,
             name: self.name,
@@ -100,8 +100,8 @@ extension Project {
         )
     }
     
-    func withChangedStatus(_ newStatus: ProjectStatus) -> Project {
-        return Project(
+    func withChangedStatus(_ newStatus: ProjectStatus) -> ProjectDbm {
+        return ProjectDbm(
             ID: self.ID,
             accountID: self.accountID,
             name: self.name,
@@ -112,8 +112,8 @@ extension Project {
         )
     }
     
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Project {
-        return Project(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> ProjectDbm {
+        return ProjectDbm(
             ID: self.ID,
             accountID: self.accountID,
             name: self.name,
@@ -124,8 +124,8 @@ extension Project {
         )
     }
     
-    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Project {
-        return Project(
+    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> ProjectDbm {
+        return ProjectDbm(
             ID: self.ID,
             accountID: self.accountID,
             name: self.name,
@@ -138,9 +138,9 @@ extension Project {
     
 }
 
-extension Project : Comparable {
+extension ProjectDbm : Comparable {
     
-    static func == (lhs: Project, rhs: Project) -> Bool {
+    static func == (lhs: ProjectDbm, rhs: ProjectDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.accountID == rhs.accountID &&
             lhs.name == rhs.name &&
@@ -148,19 +148,19 @@ extension Project : Comparable {
             lhs.status == rhs.status
     }
     
-    static func < (lhs: Project, rhs: Project) -> Bool {
+    static func < (lhs: ProjectDbm, rhs: ProjectDbm) -> Bool {
         return lhs.name < rhs.name
     }
     
-    static func <= (lhs: Project, rhs: Project) -> Bool {
+    static func <= (lhs: ProjectDbm, rhs: ProjectDbm) -> Bool {
         return lhs.name <= rhs.name
     }
     
-    static func >= (lhs: Project, rhs: Project) -> Bool {
+    static func >= (lhs: ProjectDbm, rhs: ProjectDbm) -> Bool {
         return lhs.name >= rhs.name
     }
     
-    static func > (lhs: Project, rhs: Project) -> Bool {
+    static func > (lhs: ProjectDbm, rhs: ProjectDbm) -> Bool {
         return lhs.name > rhs.name
     }
     
