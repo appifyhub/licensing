@@ -25,7 +25,9 @@ class AssignedServicePersistenceInMem : IAssignedServicePersistence {
     }
     
     override func update(_ model: AssignedService) -> EventLoopFuture<AssignedService> {
-        return success(model)
+        let newModel = model.withCurrentAssignmentTime(timeProvider)
+        storage[newModel.persistenceKey] = newModel
+        return success(newModel)
     }
     
     override func delete(_ key: Int) -> EventLoopFuture<Bool> {

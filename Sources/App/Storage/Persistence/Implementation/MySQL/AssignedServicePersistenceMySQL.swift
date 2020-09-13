@@ -45,7 +45,16 @@ class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
     }
     
     override func update(_ model: AssignedService) throws -> EventLoopFuture<AssignedService> {
-        return success(model)
+        let newModel = model.withCurrentAssignmentTime(timeProvider)
+        return onConnected { connection in
+            connection
+                .update(AssignedService.self)
+                .set(newModel)
+                .where(\AssignedService.ID == newModel.ID!)
+                .run()
+                .flatMap { _ in try self.read(newModel.ID!) }
+                .unwrap(or: "Model ID not found by its ID")
+        }
     }
     
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
