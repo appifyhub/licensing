@@ -3,7 +3,7 @@ import NIO
 
 class ServicePersistenceInMem : IServicePersistence {
     
-    private var storage: [Int : Service] = [:]
+    private var storage: [Int : ServiceDbm] = [:]
     private var currentId = AtomicInteger(value: 0)
     
     override init(timeProvider: TimeProvider) {
@@ -12,7 +12,7 @@ class ServicePersistenceInMem : IServicePersistence {
     
     // CRUD
     
-    override func create(_ model: Service) -> EventLoopFuture<Service> {
+    override func create(_ model: ServiceDbm) -> EventLoopFuture<ServiceDbm> {
         let newModel = model
             .tryWithChangedID(currentId.incrementAndGet())
             .withCurrentCreateTime(timeProvider)
@@ -21,11 +21,11 @@ class ServicePersistenceInMem : IServicePersistence {
         return success(newModel)
     }
     
-    override func read(_ key: Int) -> EventLoopFuture<Service?> {
+    override func read(_ key: Int) -> EventLoopFuture<ServiceDbm?> {
         return success(storage[key])
     }
     
-    override func update(_ model: Service) -> EventLoopFuture<Service> {
+    override func update(_ model: ServiceDbm) -> EventLoopFuture<ServiceDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         storage[newModel.persistenceKey] = newModel
         return success(newModel)
@@ -38,15 +38,15 @@ class ServicePersistenceInMem : IServicePersistence {
     
     // Additional queries
     
-    override func findOneByName(_ name: String) -> EventLoopFuture<Service?> {
+    override func findOneByName(_ name: String) -> EventLoopFuture<ServiceDbm?> {
         let result = filterValues { Service in name == Service.name }
         return success(result.first)
     }
     
     // Helpers
     
-    private func filterValues(_ filter: (Service) -> Bool) -> [Service] {
-        return storage.map { key, value -> Service in value }.filter(filter)
+    private func filterValues(_ filter: (ServiceDbm) -> Bool) -> [ServiceDbm] {
+        return storage.map { key, value -> ServiceDbm in value }.filter(filter)
     }
     
 }

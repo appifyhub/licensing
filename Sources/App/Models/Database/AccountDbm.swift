@@ -1,7 +1,7 @@
 import Foundation
 import MySQL
 
-final class Account : Codable {
+final class AccountDbm : Codable {
     
     enum AccountType : UInt8, Codable, CaseIterable, ReflectionDecodable {
         case personal = 1
@@ -62,9 +62,9 @@ final class Account : Codable {
 }
 
 // safe modifiers
-extension Account {
+extension AccountDbm {
     
-    func tryWithChangedID(_ newID: Int) -> Account {
+    func tryWithChangedID(_ newID: Int) -> AccountDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -72,7 +72,7 @@ extension Account {
             ID = newID
         }
 
-        return Account(
+        return AccountDbm(
             ID: ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -85,8 +85,8 @@ extension Account {
         )
     }
 
-    func withChangedName(_ newName: String) -> Account {
-        return Account(
+    func withChangedName(_ newName: String) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: newName,
             ownerName: self.ownerName,
@@ -99,8 +99,8 @@ extension Account {
         )
     }
     
-    func withChangedOwnerName(_ newOwnerName: String) -> Account {
-        return Account(
+    func withChangedOwnerName(_ newOwnerName: String) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: newOwnerName,
@@ -113,8 +113,8 @@ extension Account {
         )
     }
     
-    func withChangedEmail(_ newEmail: String) -> Account {
-        return Account(
+    func withChangedEmail(_ newEmail: String) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -127,8 +127,8 @@ extension Account {
         )
     }
     
-    func withChangedPasswordHash(_ newPasswordHash: String) -> Account {
-        return Account(
+    func withChangedPasswordHash(_ newPasswordHash: String) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -141,8 +141,8 @@ extension Account {
         )
     }
     
-    func withChangedType(_ newType: AccountType) -> Account {
-        return Account(
+    func withChangedType(_ newType: AccountType) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -155,8 +155,8 @@ extension Account {
         )
     }
     
-    func withChangedAuthority(_ newAuthority: AccountAuthority) -> Account {
-        return Account(
+    func withChangedAuthority(_ newAuthority: AccountAuthority) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -169,8 +169,8 @@ extension Account {
         )
     }
 
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Account {
-        return Account(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -183,8 +183,8 @@ extension Account {
         )
     }
 
-    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Account {
-        return Account(
+    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> AccountDbm {
+        return AccountDbm(
             ID: self.ID,
             name: self.name,
             ownerName: self.ownerName,
@@ -199,9 +199,9 @@ extension Account {
     
 }
 
-extension Account : Comparable {
+extension AccountDbm : Comparable {
     
-    static func == (lhs: Account, rhs: Account) -> Bool {
+    static func == (lhs: AccountDbm, rhs: AccountDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.name == rhs.name &&
             lhs.ownerName == rhs.ownerName &&
@@ -211,19 +211,19 @@ extension Account : Comparable {
             lhs.authority == rhs.authority
     }
     
-    static func < (lhs: Account, rhs: Account) -> Bool {
+    static func < (lhs: AccountDbm, rhs: AccountDbm) -> Bool {
         return lhs.name < rhs.name
     }
     
-    static func <= (lhs: Account, rhs: Account) -> Bool {
+    static func <= (lhs: AccountDbm, rhs: AccountDbm) -> Bool {
         return lhs.name <= rhs.name
     }
     
-    static func >= (lhs: Account, rhs: Account) -> Bool {
+    static func >= (lhs: AccountDbm, rhs: AccountDbm) -> Bool {
         return lhs.name >= rhs.name
     }
     
-    static func > (lhs: Account, rhs: Account) -> Bool {
+    static func > (lhs: AccountDbm, rhs: AccountDbm) -> Bool {
         return lhs.name > rhs.name
     }
     

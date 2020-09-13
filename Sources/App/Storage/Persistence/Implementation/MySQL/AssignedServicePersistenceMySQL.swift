@@ -2,7 +2,9 @@ import Foundation
 import Vapor
 import MySQL
 
-extension AssignedService : SQLTable {}
+extension AssignedServiceDbm : SQLTable {
+    static var sqlTableIdentifierString: String = "AssignedService"
+}
 
 class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
     
@@ -18,12 +20,12 @@ class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
     
     // CRUD
     
-    override func create(_ model: AssignedService) throws -> EventLoopFuture<AssignedService> {
+    override func create(_ model: AssignedServiceDbm) throws -> EventLoopFuture<AssignedServiceDbm> {
         let newModel = model
             .withCurrentAssignmentTime(timeProvider)
         return onConnected { connection in
             try connection
-                .insert(into: AssignedService.self)
+                .insert(into: AssignedServiceDbm.self)
                 .value(newModel)
                 .run()
                 .flatMap { _ in try self.read( (connection.lastMetadata?.lastInsertID(as: Int.self))! )}
@@ -31,26 +33,26 @@ class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
         }
     }
     
-    override func read(_ key: Int) throws -> EventLoopFuture<AssignedService?> {
+    override func read(_ key: Int) throws -> EventLoopFuture<AssignedServiceDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.ID == key)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.ID == key)
                 .limit(1)
-                .all(decoding: AssignedService.self)
+                .all(decoding: AssignedServiceDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func update(_ model: AssignedService) throws -> EventLoopFuture<AssignedService> {
+    override func update(_ model: AssignedServiceDbm) throws -> EventLoopFuture<AssignedServiceDbm> {
         let newModel = model.withCurrentAssignmentTime(timeProvider)
         return onConnected { connection in
             connection
-                .update(AssignedService.self)
+                .update(AssignedServiceDbm.self)
                 .set(newModel)
-                .where(\AssignedService.ID == newModel.ID!)
+                .where(\AssignedServiceDbm.ID == newModel.ID!)
                 .run()
                 .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
@@ -60,8 +62,8 @@ class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
         return onConnected { connection in
             connection
-                .delete(from: AssignedService.self)
-                .where(\AssignedService.ID == key)
+                .delete(from: AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.ID == key)
                 .run()
                 .map { _ in true }
         }
@@ -69,76 +71,76 @@ class AssignedServicePersistenceMySQL : IAssignedServicePersistence {
     
     // Additional queries
     
-    override func findAllByProject(id: Int) throws -> EventLoopFuture<[AssignedService]> {
+    override func findAllByProject(id: Int) throws -> EventLoopFuture<[AssignedServiceDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.projectID == id)
-                .all(decoding: AssignedService.self)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.projectID == id)
+                .all(decoding: AssignedServiceDbm.self)
         }
     }
     
-    override func findOneByProject(id: Int) throws -> EventLoopFuture<AssignedService?> {
+    override func findOneByProject(id: Int) throws -> EventLoopFuture<AssignedServiceDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.projectID == id)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.projectID == id)
                 .limit(1)
-                .all(decoding: AssignedService.self)
+                .all(decoding: AssignedServiceDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func findAllByService(id: Int) throws -> EventLoopFuture<[AssignedService]> {
+    override func findAllByService(id: Int) throws -> EventLoopFuture<[AssignedServiceDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.serviceID == id)
-                .all(decoding: AssignedService.self)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.serviceID == id)
+                .all(decoding: AssignedServiceDbm.self)
         }
     }
     
-    override func findOneByService(id: Int) throws -> EventLoopFuture<AssignedService?> {
+    override func findOneByService(id: Int) throws -> EventLoopFuture<AssignedServiceDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.serviceID == id)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.serviceID == id)
                 .limit(1)
-                .all(decoding: AssignedService.self)
+                .all(decoding: AssignedServiceDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func findAllByProjectAndService(projectID: Int, serviceID: Int) throws -> EventLoopFuture<[AssignedService]> {
+    override func findAllByProjectAndService(projectID: Int, serviceID: Int) throws -> EventLoopFuture<[AssignedServiceDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.projectID == projectID)
-                .where(\AssignedService.serviceID == serviceID)
-                .all(decoding: AssignedService.self)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.projectID == projectID)
+                .where(\AssignedServiceDbm.serviceID == serviceID)
+                .all(decoding: AssignedServiceDbm.self)
         }
     }
     
-    override func findOneByProjectAndService(projectID: Int, serviceID: Int) throws -> EventLoopFuture<AssignedService?> {
+    override func findOneByProjectAndService(projectID: Int, serviceID: Int) throws -> EventLoopFuture<AssignedServiceDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(AssignedService.self)
-                .where(\AssignedService.projectID == projectID)
-                .where(\AssignedService.serviceID == serviceID)
+                .from(AssignedServiceDbm.self)
+                .where(\AssignedServiceDbm.projectID == projectID)
+                .where(\AssignedServiceDbm.serviceID == serviceID)
                 .limit(1)
-                .all(decoding: AssignedService.self)
+                .all(decoding: AssignedServiceDbm.self)
                 .map { results in results.first }
         }
     }

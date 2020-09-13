@@ -1,7 +1,7 @@
 import Foundation
 import MySQL
 
-final class Property : Codable {
+final class PropertyDbm : Codable {
     
     enum PropertyType : UInt8, Codable, CaseIterable, ReflectionDecodable {
         case integer = 1
@@ -49,9 +49,9 @@ final class Property : Codable {
 }
 
 // safe modifiers
-extension Property {
+extension PropertyDbm {
     
-    func tryWithChangedID(_ newID: Int) -> Property {
+    func tryWithChangedID(_ newID: Int) -> PropertyDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -59,7 +59,7 @@ extension Property {
             ID = newID
         }
         
-        return Property(
+        return PropertyDbm(
             ID: ID,
             serviceID: self.serviceID,
             name: self.name,
@@ -70,8 +70,8 @@ extension Property {
         )
     }
     
-    func withChangedMandatory(_ newMandatory: Bool) -> Property {
-        return Property(
+    func withChangedMandatory(_ newMandatory: Bool) -> PropertyDbm {
+        return PropertyDbm(
             ID: self.ID,
             serviceID: self.serviceID,
             name: self.name,
@@ -82,8 +82,8 @@ extension Property {
         )
     }
     
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> Property {
-        return Property(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> PropertyDbm {
+        return PropertyDbm(
             ID: self.ID,
             serviceID: self.serviceID,
             name: self.name,
@@ -94,8 +94,8 @@ extension Property {
         )
     }
     
-    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> Property {
-        return Property(
+    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> PropertyDbm {
+        return PropertyDbm(
             ID: self.ID,
             serviceID: self.serviceID,
             name: self.name,
@@ -108,9 +108,9 @@ extension Property {
     
 }
 
-extension Property : Comparable {
+extension PropertyDbm : Comparable {
     
-    static func == (lhs: Property, rhs: Property) -> Bool {
+    static func == (lhs: PropertyDbm, rhs: PropertyDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.serviceID == rhs.serviceID &&
             lhs.name == rhs.name &&
@@ -118,19 +118,19 @@ extension Property : Comparable {
             lhs.mandatory == rhs.mandatory
     }
     
-    static func < (lhs: Property, rhs: Property) -> Bool {
+    static func < (lhs: PropertyDbm, rhs: PropertyDbm) -> Bool {
         return lhs.name < rhs.name
     }
     
-    static func <= (lhs: Property, rhs: Property) -> Bool {
+    static func <= (lhs: PropertyDbm, rhs: PropertyDbm) -> Bool {
         return lhs.name <= rhs.name
     }
     
-    static func >= (lhs: Property, rhs: Property) -> Bool {
+    static func >= (lhs: PropertyDbm, rhs: PropertyDbm) -> Bool {
         return lhs.name >= rhs.name
     }
     
-    static func > (lhs: Property, rhs: Property) -> Bool {
+    static func > (lhs: PropertyDbm, rhs: PropertyDbm) -> Bool {
         return lhs.name > rhs.name
     }
     

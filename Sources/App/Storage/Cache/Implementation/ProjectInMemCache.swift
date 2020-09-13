@@ -2,29 +2,29 @@ import Foundation
 
 class ProjectInMemCache : IProjectCache {
     
-    private let storage: ICache<Project>
+    private let storage: ICache<ProjectDbm>
     
     init(maxSize: Int) {
         storage = LRUCache(maxSize: maxSize)
     }
     
-    override func put(_ model: Project) -> Project {
+    override func put(_ model: ProjectDbm) -> ProjectDbm {
         return storage.put(model)
     }
     
-    override func get(_ key: AnyHashable) -> Project? {
+    override func get(_ key: AnyHashable) -> ProjectDbm? {
         return storage.get(key)
     }
     
-    override func evict(_ key: AnyHashable) -> Project? {
+    override func evict(_ key: AnyHashable) -> ProjectDbm? {
         return storage.evict(key)
     }
     
-    override func findFirst(_ filter: (Project) -> Bool) -> Project? {
+    override func findFirst(_ filter: (ProjectDbm) -> Bool) -> ProjectDbm? {
         return storage.findFirst(filter)
     }
     
-    override func findAll(_ filter: (Project) -> Bool) -> [Project] {
+    override func findAll(_ filter: (ProjectDbm) -> Bool) -> [ProjectDbm] {
         return storage.findAll(filter)
     }
     

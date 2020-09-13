@@ -3,7 +3,7 @@ import NIO
 
 class ConfiguredPropertyPersistenceInMem : IConfiguredPropertyPersistence {
     
-    private var storage: [Int : ConfiguredProperty] = [:]
+    private var storage: [Int : ConfiguredPropertyDbm] = [:]
     private var currentId = AtomicInteger(value: 0)
     
     override init(timeProvider: TimeProvider) {
@@ -12,7 +12,7 @@ class ConfiguredPropertyPersistenceInMem : IConfiguredPropertyPersistence {
     
     // CRUD
     
-    override func create(_ model: ConfiguredProperty) -> EventLoopFuture<ConfiguredProperty> {
+    override func create(_ model: ConfiguredPropertyDbm) -> EventLoopFuture<ConfiguredPropertyDbm> {
         let newModel = model
             .tryWithChangedID(currentId.incrementAndGet())
             .withCurrentCreateTime(timeProvider)
@@ -21,11 +21,11 @@ class ConfiguredPropertyPersistenceInMem : IConfiguredPropertyPersistence {
         return success(newModel)
     }
     
-    override func read(_ key: Int) -> EventLoopFuture<ConfiguredProperty?> {
+    override func read(_ key: Int) -> EventLoopFuture<ConfiguredPropertyDbm?> {
         return success(storage[key])
     }
     
-    override func update(_ model: ConfiguredProperty) -> EventLoopFuture<ConfiguredProperty> {
+    override func update(_ model: ConfiguredPropertyDbm) -> EventLoopFuture<ConfiguredPropertyDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         storage[newModel.persistenceKey] = newModel
         return success(newModel)
@@ -38,50 +38,50 @@ class ConfiguredPropertyPersistenceInMem : IConfiguredPropertyPersistence {
     
     // Additional queries
     
-    override func findAllByAssignedService(id: Int) throws -> NIO.EventLoopFuture<[ConfiguredProperty]> {
+    override func findAllByAssignedService(id: Int) throws -> NIO.EventLoopFuture<[ConfiguredPropertyDbm]> {
         let result = filterValues { configuredProperty in id == configuredProperty.assignedServiceID }
         return success(result)
     }
     
-    override func findOneByAssignedService(id: Int) throws -> NIO.EventLoopFuture<ConfiguredProperty?> {
+    override func findOneByAssignedService(id: Int) throws -> NIO.EventLoopFuture<ConfiguredPropertyDbm?> {
         let result = filterValues { configuredProperty in id == configuredProperty.assignedServiceID }
         return success(result.first)
     }
     
-    override func findAllByProperty(id: Int) throws -> NIO.EventLoopFuture<[ConfiguredProperty]> {
+    override func findAllByProperty(id: Int) throws -> NIO.EventLoopFuture<[ConfiguredPropertyDbm]> {
         let result = filterValues { configuredProperty in id == configuredProperty.propertyID }
         return success(result)
     }
     
-    override func findOneByProperty(id: Int) throws -> NIO.EventLoopFuture<ConfiguredProperty?> {
+    override func findOneByProperty(id: Int) throws -> NIO.EventLoopFuture<ConfiguredPropertyDbm?> {
         let result = filterValues { configuredProperty in id == configuredProperty.propertyID }
         return success(result.first)
     }
     
-    override func findAllByAssignedServiceAndProperty(assignedServiceID: Int, propertyID: Int) throws -> EventLoopFuture<[ConfiguredProperty]> {
+    override func findAllByAssignedServiceAndProperty(assignedServiceID: Int, propertyID: Int) throws -> EventLoopFuture<[ConfiguredPropertyDbm]> {
         let result = filterValues { configuredProperty in assignedServiceID == configuredProperty.assignedServiceID && propertyID == configuredProperty.propertyID }
         return success(result)
     }
     
-    override func findOneByAssignedServiceAndProperty(assignedServiceID: Int, propertyID: Int) throws -> EventLoopFuture<ConfiguredProperty?> {
+    override func findOneByAssignedServiceAndProperty(assignedServiceID: Int, propertyID: Int) throws -> EventLoopFuture<ConfiguredPropertyDbm?> {
         let result = filterValues { configuredProperty in assignedServiceID == configuredProperty.assignedServiceID && propertyID == configuredProperty.propertyID }
         return success(result.first)
     }
     
-    override func findAllByValue(value: String) throws -> NIO.EventLoopFuture<[ConfiguredProperty]> {
+    override func findAllByValue(value: String) throws -> NIO.EventLoopFuture<[ConfiguredPropertyDbm]> {
         let result = filterValues { configuredProperty in value == configuredProperty.value }
         return success(result)
     }
     
-    override func findOneByValue(value: String) throws -> NIO.EventLoopFuture<ConfiguredProperty?> {
+    override func findOneByValue(value: String) throws -> NIO.EventLoopFuture<ConfiguredPropertyDbm?> {
         let result = filterValues { configuredProperty in value == configuredProperty.value }
         return success(result.first)
     }
     
     // Helpers
     
-    private func filterValues(_ filter: (ConfiguredProperty) -> Bool) -> [ConfiguredProperty] {
-        return storage.map { key, value -> ConfiguredProperty in value }.filter(filter)
+    private func filterValues(_ filter: (ConfiguredPropertyDbm) -> Bool) -> [ConfiguredPropertyDbm] {
+        return storage.map { key, value -> ConfiguredPropertyDbm in value }.filter(filter)
     }
     
 }

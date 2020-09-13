@@ -1,13 +1,13 @@
 import Foundation
 import NIO
 
-extension Access : HasPersistenceKey {
+extension AccessDbm : HasPersistenceKey {
     typealias KeyType = String
     
     var persistenceKey: String { token ?? "invalid" }
 }
 
-class IAccessPersistence : IPersistence<Access> {
+class IAccessPersistence : IPersistence<AccessDbm> {
     
     let timeProvider: TimeProvider
     
@@ -15,8 +15,8 @@ class IAccessPersistence : IPersistence<Access> {
         self.timeProvider = timeProvider
     }
     
-    func findAllByAccount(id: Int) throws -> NIO.EventLoopFuture<[Access]> { unsupported() }
+    func findAllByAccount(id: Int) throws -> NIO.EventLoopFuture<[AccessDbm]> { unsupported() }
     
-    func findOneByAccount(id: Int) throws -> NIO.EventLoopFuture<Access?> { unsupported() }
+    func findOneByAccount(id: Int) throws -> NIO.EventLoopFuture<AccessDbm?> { unsupported() }
     
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-struct ConfiguredProperty : Codable {
+struct ConfiguredPropertyDbm : Codable {
     
     let ID: Int?
     let assignedServiceID: Int
@@ -37,9 +37,9 @@ struct ConfiguredProperty : Codable {
 }
 
 // safe modifiers
-extension ConfiguredProperty {
+extension ConfiguredPropertyDbm {
     
-    func tryWithChangedID(_ newID: Int) -> ConfiguredProperty {
+    func tryWithChangedID(_ newID: Int) -> ConfiguredPropertyDbm {
         let ID: Int
         if let oldID = self.ID {
             ID = oldID
@@ -47,7 +47,7 @@ extension ConfiguredProperty {
             ID = newID
         }
         
-        return ConfiguredProperty(
+        return ConfiguredPropertyDbm(
             ID: ID,
             assignedServiceID: self.assignedServiceID,
             propertyID: self.propertyID,
@@ -57,8 +57,8 @@ extension ConfiguredProperty {
         )
     }
     
-    func withChangedValue(_ newValue: String) -> ConfiguredProperty {
-        return ConfiguredProperty(
+    func withChangedValue(_ newValue: String) -> ConfiguredPropertyDbm {
+        return ConfiguredPropertyDbm(
             ID: self.ID,
             assignedServiceID: self.assignedServiceID,
             propertyID: self.propertyID,
@@ -68,8 +68,8 @@ extension ConfiguredProperty {
         )
     }
     
-    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> ConfiguredProperty {
-        return ConfiguredProperty(
+    func withCurrentCreateTime(_ timeProvider: TimeProvider) -> ConfiguredPropertyDbm {
+        return ConfiguredPropertyDbm(
             ID: self.ID,
             assignedServiceID: self.assignedServiceID,
             propertyID: self.propertyID,
@@ -79,8 +79,8 @@ extension ConfiguredProperty {
         )
     }
     
-    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> ConfiguredProperty {
-        return ConfiguredProperty(
+    func withCurrentUpdateTime(_ timeProvider: TimeProvider) -> ConfiguredPropertyDbm {
+        return ConfiguredPropertyDbm(
             ID: self.ID,
             assignedServiceID: self.assignedServiceID,
             propertyID: self.propertyID,
@@ -92,26 +92,26 @@ extension ConfiguredProperty {
     
 }
 
-extension ConfiguredProperty : Comparable {
+extension ConfiguredPropertyDbm : Comparable {
     
-    static func == (lhs: ConfiguredProperty, rhs: ConfiguredProperty) -> Bool {
+    static func == (lhs: ConfiguredPropertyDbm, rhs: ConfiguredPropertyDbm) -> Bool {
         return lhs.ID == rhs.ID &&
             lhs.value == rhs.value
     }
     
-    static func < (lhs: ConfiguredProperty, rhs: ConfiguredProperty) -> Bool {
+    static func < (lhs: ConfiguredPropertyDbm, rhs: ConfiguredPropertyDbm) -> Bool {
         return lhs.value < rhs.value
     }
     
-    static func <= (lhs: ConfiguredProperty, rhs: ConfiguredProperty) -> Bool {
+    static func <= (lhs: ConfiguredPropertyDbm, rhs: ConfiguredPropertyDbm) -> Bool {
         return lhs.value <= rhs.value
     }
     
-    static func >= (lhs: ConfiguredProperty, rhs: ConfiguredProperty) -> Bool {
+    static func >= (lhs: ConfiguredPropertyDbm, rhs: ConfiguredPropertyDbm) -> Bool {
         return lhs.value >= rhs.value
     }
     
-    static func > (lhs: ConfiguredProperty, rhs: ConfiguredProperty) -> Bool {
+    static func > (lhs: ConfiguredPropertyDbm, rhs: ConfiguredPropertyDbm) -> Bool {
         return lhs.value > rhs.value
     }
     

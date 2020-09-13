@@ -2,7 +2,9 @@ import Foundation
 import Vapor
 import MySQL
 
-extension Property : SQLTable {}
+extension PropertyDbm : SQLTable {
+    static var sqlTableIdentifierString: String = "Property"
+}
 
 class PropertyPersistenceMySQL : IPropertyPersistence {
     
@@ -18,13 +20,13 @@ class PropertyPersistenceMySQL : IPropertyPersistence {
     
     // CRUD
     
-    override func create(_ model: Property) throws -> EventLoopFuture<Property> {
+    override func create(_ model: PropertyDbm) throws -> EventLoopFuture<PropertyDbm> {
         let newModel = model
             .withCurrentCreateTime(timeProvider)
             .withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             try connection
-                .insert(into: Property.self)
+                .insert(into: PropertyDbm.self)
                 .value(newModel)
                 .run()
                 .flatMap { _ in try self.read( (connection.lastMetadata?.lastInsertID(as: Int.self))! )}
@@ -32,26 +34,26 @@ class PropertyPersistenceMySQL : IPropertyPersistence {
         }
     }
     
-    override func read(_ key: Int) throws -> EventLoopFuture<Property?> {
+    override func read(_ key: Int) throws -> EventLoopFuture<PropertyDbm?> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Property.self)
-                .where(\Property.ID == key)
+                .from(PropertyDbm.self)
+                .where(\PropertyDbm.ID == key)
                 .limit(1)
-                .all(decoding: Property.self)
+                .all(decoding: PropertyDbm.self)
                 .map { results in results.first }
         }
     }
     
-    override func update(_ model: Property) throws -> EventLoopFuture<Property> {
+    override func update(_ model: PropertyDbm) throws -> EventLoopFuture<PropertyDbm> {
         let newModel = model.withCurrentUpdateTime(timeProvider)
         return onConnected { connection in
             connection
-                .update(Property.self)
+                .update(PropertyDbm.self)
                 .set(newModel)
-                .where(\Property.ID == newModel.ID!)
+                .where(\PropertyDbm.ID == newModel.ID!)
                 .run()
                 .flatMap { _ in try self.read(newModel.ID!) }
                 .unwrap(or: "Model ID not found by its ID")
@@ -61,8 +63,8 @@ class PropertyPersistenceMySQL : IPropertyPersistence {
     override func delete(_ key: Int) throws -> EventLoopFuture<Bool> {
         return onConnected { connection in
             connection
-                .delete(from: Property.self)
-                .where(\Property.ID == key)
+                .delete(from: PropertyDbm.self)
+                .where(\PropertyDbm.ID == key)
                 .run()
                 .map { _ in true }
         }
@@ -70,47 +72,47 @@ class PropertyPersistenceMySQL : IPropertyPersistence {
     
     // Additional queries
     
-    override func findAllByService(id: Int) throws -> EventLoopFuture<[Property]> {
+    override func findAllByService(id: Int) throws -> EventLoopFuture<[PropertyDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Property.self)
-                .where(\Property.serviceID == id)
-                .all(decoding: Property.self)
+                .from(PropertyDbm.self)
+                .where(\PropertyDbm.serviceID == id)
+                .all(decoding: PropertyDbm.self)
         }
     }
     
-    override func findAllByName(_ name: String) throws -> EventLoopFuture<[Property]> {
+    override func findAllByName(_ name: String) throws -> EventLoopFuture<[PropertyDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Property.self)
-                .where(\Property.name == name)
-                .all(decoding: Property.self)
+                .from(PropertyDbm.self)
+                .where(\PropertyDbm.name == name)
+                .all(decoding: PropertyDbm.self)
         }
     }
     
-    override func findAllByType(_ type: Property.PropertyType) throws -> EventLoopFuture<[Property]> {
+    override func findAllByType(_ type: PropertyDbm.PropertyType) throws -> EventLoopFuture<[PropertyDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Property.self)
-                .where(\Property.type == type)
-                .all(decoding: Property.self)
+                .from(PropertyDbm.self)
+                .where(\PropertyDbm.type == type)
+                .all(decoding: PropertyDbm.self)
         }
     }
     
-    override func findAllByMandatory(_ mandatory: Bool) throws -> EventLoopFuture<[Property]> {
+    override func findAllByMandatory(_ mandatory: Bool) throws -> EventLoopFuture<[PropertyDbm]> {
         return onConnected { connection in
             connection
                 .select()
                 .all()
-                .from(Property.self)
-                .where(\Property.mandatory == mandatory)
-                .all(decoding: Property.self)
+                .from(PropertyDbm.self)
+                .where(\PropertyDbm.mandatory == mandatory)
+                .all(decoding: PropertyDbm.self)
         }
     }
     

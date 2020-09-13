@@ -2,29 +2,29 @@ import Foundation
 
 class AccountInMemCache : IAccountCache {
     
-    private let storage: ICache<Account>
+    private let storage: ICache<AccountDbm>
     
     init(maxSize: Int) {
         storage = LRUCache(maxSize: maxSize)
     }
     
-    override func put(_ model: Account) -> Account {
+    override func put(_ model: AccountDbm) -> AccountDbm {
         return storage.put(model)
     }
     
-    override func get(_ key: AnyHashable) -> Account? {
+    override func get(_ key: AnyHashable) -> AccountDbm? {
         return storage.get(key)
     }
     
-    override func evict(_ key: AnyHashable) -> Account? {
+    override func evict(_ key: AnyHashable) -> AccountDbm? {
         return storage.evict(key)
     }
     
-    override func findFirst(_ filter: (Account) -> Bool) -> Account? {
+    override func findFirst(_ filter: (AccountDbm) -> Bool) -> AccountDbm? {
         return storage.findFirst(filter)
     }
     
-    override func findAll(_ filter: (Account) -> Bool) -> [Account] {
+    override func findAll(_ filter: (AccountDbm) -> Bool) -> [AccountDbm] {
         return storage.findAll(filter)
     }
     
