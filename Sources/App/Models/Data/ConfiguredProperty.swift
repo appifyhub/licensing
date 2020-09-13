@@ -14,8 +14,8 @@ struct ConfiguredProperty : Codable {
         assignedServiceID: Int,
         propertyID: Int,
         value: String,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.assignedServiceID = assignedServiceID

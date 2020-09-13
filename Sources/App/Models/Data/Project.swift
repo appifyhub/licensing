@@ -30,8 +30,8 @@ final class Project : Codable {
         name: String,
         type: ProjectType,
         status: ProjectStatus,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.accountID = accountID

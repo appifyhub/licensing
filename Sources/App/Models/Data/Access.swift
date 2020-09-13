@@ -6,7 +6,11 @@ final class Access : Codable {
     let accountID: Int
     let createdAt: Int64
     
-    init(token: String? = nil, accountID: Int, createdAt: Int64) {
+    init(
+        token: String? = nil,
+        accountID: Int,
+        createdAt: Int64 = 0
+    ) {
         self.token = token
         self.accountID = accountID
         self.createdAt = createdAt

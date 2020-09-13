@@ -12,8 +12,8 @@ final class Service : Codable {
         ID: Int? = nil,
         name: String,
         description: String,
-        createdAt: Int64,
-        updatedAt: Int64
+        createdAt: Int64 = 0,
+        updatedAt: Int64 = 0
     ) {
         self.ID = ID
         self.name = name
