@@ -1,7 +1,7 @@
 import Foundation
 import Vapor
 
-struct MessageResponse : Content {
+struct SimpleMessageDto : Content {
     
     let message: String
     
